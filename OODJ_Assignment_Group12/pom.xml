@@ -16,6 +16,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>foodorderingsystem.OODJ_Assignment_Group12</exec.mainClass>
+        <exec.mainClass>foodOrderingSystem.OODJ_Assignment_Group12</exec.mainClass>
     </properties>
 </project>
