@@ -1,4 +1,4 @@
-package foodOrderingSystem.Classes;
+package foodOrderingSystem;
 
 import javax.swing.*;
 import javax.swing.border.Border;

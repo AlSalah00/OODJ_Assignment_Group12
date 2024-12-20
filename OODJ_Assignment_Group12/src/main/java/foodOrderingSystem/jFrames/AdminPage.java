@@ -1,6 +1,6 @@
 
 package foodOrderingSystem.jFrames;
-import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.ButtonStyler;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
