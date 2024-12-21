@@ -71,20 +71,22 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="UserRegBtn" max="32767" attributes="0"/>
-                  <Component id="ReceiptsBtn" max="32767" attributes="0"/>
-                  <Component id="TransactionBtn" alignment="1" max="32767" attributes="0"/>
-                  <Component id="TopUpBtn" alignment="1" max="32767" attributes="0"/>
+                  <Component id="MenuBtn" max="32767" attributes="0"/>
+                  <Component id="TransactionHisBtn" max="32767" attributes="0"/>
+                  <Component id="OrderHisBtn" alignment="1" max="32767" attributes="0"/>
+                  <Component id="OrderStatusBtn" alignment="1" max="32767" attributes="0"/>
+                  <Component id="ReviewsBtn" alignment="0" max="32767" attributes="0"/>
+                  <Component id="NotificationBtn" alignment="0" max="32767" attributes="0"/>
                   <Component id="LogoutBtn" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                              <Component id="SeparatorPanel" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                               <Component id="LogoLbl" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                              <Component id="SeparatorPanel" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="37" max="32767" attributes="0"/>
@@ -97,13 +99,17 @@
                       <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="LogoLbl" min="-2" pref="99" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="UserRegBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="MenuBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TopUpBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="OrderStatusBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TransactionBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="OrderHisBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ReceiptsBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="TransactionHisBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="ReviewsBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="NotificationBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="SeparatorPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -114,7 +120,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="UserRegBtn">
+            <Component class="javax.swing.JButton" name="MenuBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -123,9 +129,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/add.png"/>
+                  <Image iconType="3" name="/menu.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="User Registration"/>
+                <Property name="text" type="java.lang.String" value="Menu"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -153,10 +159,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UserRegBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MenuBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="TopUpBtn">
+            <Component class="javax.swing.JButton" name="OrderStatusBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -165,9 +171,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/top-up.png"/>
+                  <Image iconType="3" name="/track.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Top-Up"/>
+                <Property name="text" type="java.lang.String" value="Order Status"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -195,10 +201,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TopUpBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OrderStatusBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="TransactionBtn">
+            <Component class="javax.swing.JButton" name="OrderHisBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -207,9 +213,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/transaction.png"/>
+                  <Image iconType="3" name="/order-history.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Transactions"/>
+                <Property name="text" type="java.lang.String" value="Order History"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -237,10 +243,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TransactionBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OrderHisBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="ReceiptsBtn">
+            <Component class="javax.swing.JButton" name="TransactionHisBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -249,9 +255,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/bill.png"/>
+                  <Image iconType="3" name="/transaction-history.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Receipts"/>
+                <Property name="text" type="java.lang.String" value="Transaction History"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
@@ -280,7 +286,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ReceiptsBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TransactionHisBtnActionPerformed"/>
               </Events>
             </Component>
             <Container class="javax.swing.JPanel" name="SeparatorPanel">
@@ -354,6 +360,92 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LogoutBtnActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="ReviewsBtn">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="18" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/review.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Reviews"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
+                    <CompoundBorder>
+                      <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                        <EmptyBorder bottom="5" left="16" right="10" top="5"/>
+                      </Border>
+                      <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder>
+                          <Color PropertyName="color" blue="ff" green="ff" red="ff" type="rgb"/>
+                        </LineBorder>
+                      </Border>
+                    </CompoundBorder>
+                  </Border>
+                </Property>
+                <Property name="borderPainted" type="boolean" value="false"/>
+                <Property name="contentAreaFilled" type="boolean" value="false"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="2"/>
+                <Property name="horizontalTextPosition" type="int" value="4"/>
+                <Property name="iconTextGap" type="int" value="10"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[5, 15, 5, 10]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ReviewsBtnActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="NotificationBtn">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="18" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/bell.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Notification"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
+                    <CompoundBorder>
+                      <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                        <EmptyBorder bottom="5" left="16" right="10" top="5"/>
+                      </Border>
+                      <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                        <LineBorder>
+                          <Color PropertyName="color" blue="ff" green="ff" red="ff" type="rgb"/>
+                        </LineBorder>
+                      </Border>
+                    </CompoundBorder>
+                  </Border>
+                </Property>
+                <Property name="borderPainted" type="boolean" value="false"/>
+                <Property name="contentAreaFilled" type="boolean" value="false"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
+                </Property>
+                <Property name="horizontalAlignment" type="int" value="2"/>
+                <Property name="horizontalTextPosition" type="int" value="4"/>
+                <Property name="iconTextGap" type="int" value="10"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[5, 15, 5, 10]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="NotificationBtnActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -433,12 +525,12 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="24" style="2"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Administrator Page"/>
+                    <Property name="text" type="java.lang.String" value="Customer Page"/>
                   </Properties>
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="UserRegPanel">
+            <Container class="javax.swing.JPanel" name="MenuPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -463,7 +555,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="TopUpPanel">
+            <Container class="javax.swing.JPanel" name="OrderStatusPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -488,7 +580,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="TransactionsPanel">
+            <Container class="javax.swing.JPanel" name="OrderHistoryPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -513,7 +605,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="ReceiptsPanel">
+            <Container class="javax.swing.JPanel" name="TransactionHisPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -522,6 +614,56 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
                   <CardConstraints cardName="card6"/>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="640" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="527" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+            <Container class="javax.swing.JPanel" name="ReviewsPanel">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+                  <CardConstraints cardName="card7"/>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="640" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="527" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+            <Container class="javax.swing.JPanel" name="NotificationPanel">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+                  <CardConstraints cardName="card8"/>
                 </Constraint>
               </Constraints>
 

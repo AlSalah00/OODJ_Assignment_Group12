@@ -71,10 +71,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="UserRegBtn" max="32767" attributes="0"/>
-                  <Component id="ReceiptsBtn" max="32767" attributes="0"/>
-                  <Component id="TransactionBtn" alignment="1" max="32767" attributes="0"/>
-                  <Component id="TopUpBtn" alignment="1" max="32767" attributes="0"/>
+                  <Component id="VendorPerfBtn" max="32767" attributes="0"/>
+                  <Component id="RmvItemBtn" max="32767" attributes="0"/>
+                  <Component id="CusComplaintsBtn" alignment="1" max="32767" attributes="0"/>
+                  <Component id="DRPerfBtn" alignment="1" max="32767" attributes="0"/>
                   <Component id="LogoutBtn" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -87,7 +87,7 @@
                               <Component id="LogoLbl" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="37" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -97,13 +97,13 @@
                       <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       <Component id="LogoLbl" min="-2" pref="99" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="UserRegBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="VendorPerfBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TopUpBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="DRPerfBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="TransactionBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="CusComplaintsBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ReceiptsBtn" min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="RmvItemBtn" min="-2" pref="43" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="SeparatorPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -114,7 +114,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="UserRegBtn">
+            <Component class="javax.swing.JButton" name="VendorPerfBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -123,9 +123,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/add.png"/>
+                  <Image iconType="3" name="/profit.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="User Registration"/>
+                <Property name="text" type="java.lang.String" value="Vendor Performance"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -153,10 +153,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UserRegBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="VendorPerfBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="TopUpBtn">
+            <Component class="javax.swing.JButton" name="DRPerfBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -165,9 +165,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/top-up.png"/>
+                  <Image iconType="3" name="/performance(runner).png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Top-Up"/>
+                <Property name="text" type="java.lang.String" value="Delivery Runner Performance"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -195,10 +195,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TopUpBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="DRPerfBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="TransactionBtn">
+            <Component class="javax.swing.JButton" name="CusComplaintsBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -207,9 +207,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/transaction.png"/>
+                  <Image iconType="3" name="/complaint.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Transactions"/>
+                <Property name="text" type="java.lang.String" value="Customer Complaints"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
                     <CompoundBorder>
@@ -237,10 +237,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TransactionBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CusComplaintsBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="ReceiptsBtn">
+            <Component class="javax.swing.JButton" name="RmvItemBtn">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="18" style="1"/>
@@ -249,9 +249,9 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/bill.png"/>
+                  <Image iconType="3" name="/remove.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Receipts"/>
+                <Property name="text" type="java.lang.String" value="Remove Vendor Item"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
@@ -280,7 +280,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ReceiptsBtnActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RmvItemBtnActionPerformed"/>
               </Events>
             </Component>
             <Container class="javax.swing.JPanel" name="SeparatorPanel">
@@ -433,12 +433,12 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="24" style="2"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Administrator Page"/>
+                    <Property name="text" type="java.lang.String" value="Manager Page"/>
                   </Properties>
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="UserRegPanel">
+            <Container class="javax.swing.JPanel" name="VendorPerfPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -463,7 +463,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="TopUpPanel">
+            <Container class="javax.swing.JPanel" name="DRPerfPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -488,7 +488,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="TransactionsPanel">
+            <Container class="javax.swing.JPanel" name="CusComplaintsPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -513,7 +513,7 @@
                 </DimensionLayout>
               </Layout>
             </Container>
-            <Container class="javax.swing.JPanel" name="ReceiptsPanel">
+            <Container class="javax.swing.JPanel" name="RmvItemPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
