@@ -1,14 +1,13 @@
 
 package foodOrderingSystem.jFrames;
+import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
-import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 
 public class LoginPage extends javax.swing.JFrame {
@@ -17,8 +16,12 @@ public class LoginPage extends javax.swing.JFrame {
      * Creates new form LoginPage
      */
     public LoginPage() {
-        initComponents();   
+        initComponents();  
+        
+        
     }
+    
+    private User currentUser = null;
     
     Color hover = new Color(255, 165, 0, 255);
     Color normal = new Color(255, 153, 0, 255);
@@ -38,7 +41,66 @@ public class LoginPage extends javax.swing.JFrame {
         }
     }
     
+    public void Login() {
+        
+        String username = UsernameTxt.getText();
+        String password = new String(PasswordTxt.getPassword());
+        
+        currentUser = User.Login(username, password);
+        
+        if (currentUser != null) {
+            goToPage(currentUser);
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Incorrect username or password.", "Error", JOptionPane.ERROR_MESSAGE);            
+        }
+    }
     
+    private void goToPage(User user) {
+        
+        String username = user.getUsername();
+        
+        switch(user.getRole()) {
+            
+            case "Admin":
+                this.dispose();
+                AdminPage ap = new AdminPage(username);
+                ap.pack();
+                ap.setLocationRelativeTo(null);
+                ap.setVisible(true);
+                break;
+            case "Customer":
+                this.dispose();
+                CustomerPage cusp = new CustomerPage(username);
+                cusp.pack();
+                cusp.setLocationRelativeTo(null);
+                cusp.setVisible(true);
+                break;
+            case "Delivery Runner":
+                this.dispose();
+                DeliveryRunnerPage drp = new DeliveryRunnerPage(username);
+                drp.pack();
+                drp.setLocationRelativeTo(null);
+                drp.setVisible(true);
+                break;
+            case "Manager":
+                this.dispose();
+                ManagerPage mp = new ManagerPage(username);
+                mp.pack();
+                mp.setLocationRelativeTo(null);
+                mp.setVisible(true);
+                break;
+            case "Vendor":
+                this.dispose();
+                VendorPage vp = new VendorPage(username);
+                vp.pack();
+                vp.setLocationRelativeTo(null);
+                vp.setVisible(true);
+                break;
+            default:
+            JOptionPane.showMessageDialog(null, "Unable to identify the user role.", "Error", JOptionPane.ERROR_MESSAGE);                
+        }
+    }
     
 
     /**
@@ -166,11 +228,17 @@ public class LoginPage extends javax.swing.JFrame {
         LoginBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         LoginBtn.setForeground(new java.awt.Color(255, 255, 255));
         LoginBtn.setText("Login");
-        LoginBtn.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 0), 4));
+        LoginBtn.setBorder(null);
+        LoginBtn.setBorderPainted(false);
         LoginBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         LoginBtn.setFocusPainted(false);
+        LoginBtn.setFocusable(false);
         LoginBtn.setMargin(new java.awt.Insets(5, 15, 5, 10));
+        LoginBtn.setOpaque(true);
         LoginBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LoginBtnMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 LoginBtnMouseEntered(evt);
             }
@@ -219,12 +287,9 @@ public class LoginPage extends javax.swing.JFrame {
                                     .addComponent(PasswordIcon))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(BackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(BackgroundPanelLayout.createSequentialGroup()
-                                        .addComponent(UsernameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(BackgroundPanelLayout.createSequentialGroup()
-                                        .addComponent(PasswordTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))))))
+                                    .addComponent(UsernameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(PasswordTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(SidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -277,12 +342,10 @@ public class LoginPage extends javax.swing.JFrame {
 
     private void LoginBtnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseEntered
         LoginBtn.setBackground(hover);
-        LoginBtn.setBorder(BorderFactory.createLineBorder(hover, 4));
     }//GEN-LAST:event_LoginBtnMouseEntered
 
     private void LoginBtnMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseExited
         LoginBtn.setBackground(normal);
-        LoginBtn.setBorder(BorderFactory.createLineBorder(normal, 4));
     }//GEN-LAST:event_LoginBtnMouseExited
 
     private void UsernameTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UsernameTxtMouseClicked
@@ -324,6 +387,16 @@ public class LoginPage extends javax.swing.JFrame {
         }       
         
     }//GEN-LAST:event_PasswordTxtFocusLost
+
+    private void LoginBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseClicked
+        
+        if ("Username".equals(UsernameTxt.getText()) || "Password".equals(PasswordTxt.getText())) {
+            JOptionPane.showMessageDialog(null, "Please enter your details.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+           Login(); 
+        }
+    }//GEN-LAST:event_LoginBtnMouseClicked
 
     /**
      * @param args the command line arguments

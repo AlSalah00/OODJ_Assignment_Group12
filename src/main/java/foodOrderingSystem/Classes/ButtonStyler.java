@@ -1,7 +1,6 @@
 package foodOrderingSystem.Classes;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -36,25 +35,19 @@ public class ButtonStyler {
     }
 
     public static void applyHoverStyle(JButton button, Icon hoverIcon) {
-        Border lineBorder = BorderFactory.createLineBorder(Color.white, 4);
-        Border paddingBorder = BorderFactory.createEmptyBorder(5,15,5,10);
+        button.setFocusable(true);
         button.setContentAreaFilled(true);
-        button.setBorderPainted(true);
-        button.setBorder(BorderFactory.createCompoundBorder(lineBorder, paddingBorder));
+        button.setOpaque(true);
         button.setBackground(Color.white);
         button.setForeground(Color.orange);
-        button.setMargin(new Insets(5, 15, 5, 10));
-        button.setIcon(hoverIcon); // Set hover icon
+        button.setIcon(hoverIcon);
     }
 
     public static void applyDefaultStyle(JButton button, Icon defaultIcon) {
-        Color transparent = new Color(255, 255, 255, 0);
-        Border emptyLineBorder = BorderFactory.createLineBorder(transparent, 4);
-        Border paddingBorder = BorderFactory.createEmptyBorder(5, 15, 5, 10);
-        button.setBorder(BorderFactory.createCompoundBorder(emptyLineBorder, paddingBorder));
         button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setFocusable(false);
         button.setForeground(Color.white);
-        button.setMargin(new Insets(5, 15, 5, 10));
         button.setIcon(defaultIcon);
     }
 }

@@ -10,6 +10,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class VendorPage extends javax.swing.JFrame {
 
@@ -36,9 +37,15 @@ public class VendorPage extends javax.swing.JFrame {
     Icon defaultIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
     Icon hoverIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
     
-    public VendorPage() {
+    public VendorPage(String username) {
+        
+        try { 
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch(Exception ignored){}
+        
         initComponents();
         
+        WelcomeLbl.setText("Welcome, " + username);
                          
         JButton[] allButtons = {ItemsBtn, OrdersBtn, OrderStatusBtn, OrderHisBtn, CusReviewBtn, RevenueBtn, LogoutBtn};      
         
@@ -113,10 +120,12 @@ public class VendorPage extends javax.swing.JFrame {
         ItemsBtn.setForeground(new java.awt.Color(255, 255, 255));
         ItemsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/menu.png"))); // NOI18N
         ItemsBtn.setText("Manage Menu Items");
-        ItemsBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        ItemsBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         ItemsBtn.setBorderPainted(false);
         ItemsBtn.setContentAreaFilled(false);
         ItemsBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ItemsBtn.setFocusPainted(false);
+        ItemsBtn.setFocusable(false);
         ItemsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         ItemsBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         ItemsBtn.setIconTextGap(10);
@@ -131,10 +140,12 @@ public class VendorPage extends javax.swing.JFrame {
         OrdersBtn.setForeground(new java.awt.Color(255, 255, 255));
         OrdersBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/order.png"))); // NOI18N
         OrdersBtn.setText("Orders");
-        OrdersBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        OrdersBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         OrdersBtn.setBorderPainted(false);
         OrdersBtn.setContentAreaFilled(false);
         OrdersBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        OrdersBtn.setFocusPainted(false);
+        OrdersBtn.setFocusable(false);
         OrdersBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         OrdersBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         OrdersBtn.setIconTextGap(10);
@@ -149,10 +160,12 @@ public class VendorPage extends javax.swing.JFrame {
         OrderStatusBtn.setForeground(new java.awt.Color(255, 255, 255));
         OrderStatusBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/track.png"))); // NOI18N
         OrderStatusBtn.setText("Order Status");
-        OrderStatusBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        OrderStatusBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         OrderStatusBtn.setBorderPainted(false);
         OrderStatusBtn.setContentAreaFilled(false);
         OrderStatusBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        OrderStatusBtn.setFocusPainted(false);
+        OrderStatusBtn.setFocusable(false);
         OrderStatusBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         OrderStatusBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         OrderStatusBtn.setIconTextGap(10);
@@ -168,10 +181,12 @@ public class VendorPage extends javax.swing.JFrame {
         OrderHisBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/order-history.png"))); // NOI18N
         OrderHisBtn.setText("Order History");
         OrderHisBtn.setToolTipText("");
-        OrderHisBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        OrderHisBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         OrderHisBtn.setBorderPainted(false);
         OrderHisBtn.setContentAreaFilled(false);
         OrderHisBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        OrderHisBtn.setFocusPainted(false);
+        OrderHisBtn.setFocusable(false);
         OrderHisBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         OrderHisBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         OrderHisBtn.setIconTextGap(10);
@@ -203,10 +218,12 @@ public class VendorPage extends javax.swing.JFrame {
         LogoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logout.png"))); // NOI18N
         LogoutBtn.setText("Logout");
         LogoutBtn.setToolTipText("");
-        LogoutBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        LogoutBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         LogoutBtn.setBorderPainted(false);
         LogoutBtn.setContentAreaFilled(false);
         LogoutBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LogoutBtn.setFocusPainted(false);
+        LogoutBtn.setFocusable(false);
         LogoutBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         LogoutBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         LogoutBtn.setIconTextGap(10);
@@ -222,10 +239,12 @@ public class VendorPage extends javax.swing.JFrame {
         CusReviewBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/review.png"))); // NOI18N
         CusReviewBtn.setText("Customer Review");
         CusReviewBtn.setToolTipText("");
-        CusReviewBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        CusReviewBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         CusReviewBtn.setBorderPainted(false);
         CusReviewBtn.setContentAreaFilled(false);
         CusReviewBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CusReviewBtn.setFocusPainted(false);
+        CusReviewBtn.setFocusable(false);
         CusReviewBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         CusReviewBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         CusReviewBtn.setIconTextGap(10);
@@ -241,10 +260,12 @@ public class VendorPage extends javax.swing.JFrame {
         RevenueBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profit.png"))); // NOI18N
         RevenueBtn.setText("Revenue");
         RevenueBtn.setToolTipText("");
-        RevenueBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        RevenueBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         RevenueBtn.setBorderPainted(false);
         RevenueBtn.setContentAreaFilled(false);
         RevenueBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RevenueBtn.setFocusPainted(false);
+        RevenueBtn.setFocusable(false);
         RevenueBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         RevenueBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         RevenueBtn.setIconTextGap(10);
@@ -556,7 +577,7 @@ public class VendorPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VendorPage().setVisible(true);
+                new VendorPage(null).setVisible(true);
             }
         });
     }

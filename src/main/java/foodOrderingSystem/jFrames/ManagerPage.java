@@ -10,6 +10,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class ManagerPage extends javax.swing.JFrame {
 
@@ -30,10 +31,16 @@ public class ManagerPage extends javax.swing.JFrame {
     Icon defaultIcon5 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
     Icon hoverIcon5 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
     
-    public ManagerPage() {
+    public ManagerPage(String username) {
+        
+        try { 
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch(Exception ignored){}
+        
         initComponents();
         
-                         
+        WelcomeLbl.setText("Welcome, " + username);               
+        
         JButton[] allButtons = {VendorPerfBtn, DRPerfBtn, CusComplaintsBtn, RmvItemBtn, LogoutBtn};      
         
         ButtonStyler.applyMouseEffects(VendorPerfBtn, allButtons, defaultIcon1, hoverIcon1);
@@ -99,10 +106,12 @@ public class ManagerPage extends javax.swing.JFrame {
         VendorPerfBtn.setForeground(new java.awt.Color(255, 255, 255));
         VendorPerfBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profit.png"))); // NOI18N
         VendorPerfBtn.setText("Vendor Performance");
-        VendorPerfBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        VendorPerfBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         VendorPerfBtn.setBorderPainted(false);
         VendorPerfBtn.setContentAreaFilled(false);
         VendorPerfBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        VendorPerfBtn.setFocusPainted(false);
+        VendorPerfBtn.setFocusable(false);
         VendorPerfBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         VendorPerfBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         VendorPerfBtn.setIconTextGap(10);
@@ -117,10 +126,12 @@ public class ManagerPage extends javax.swing.JFrame {
         DRPerfBtn.setForeground(new java.awt.Color(255, 255, 255));
         DRPerfBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/performance(runner).png"))); // NOI18N
         DRPerfBtn.setText("Delivery Runner Performance");
-        DRPerfBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        DRPerfBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         DRPerfBtn.setBorderPainted(false);
         DRPerfBtn.setContentAreaFilled(false);
         DRPerfBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DRPerfBtn.setFocusPainted(false);
+        DRPerfBtn.setFocusable(false);
         DRPerfBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         DRPerfBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         DRPerfBtn.setIconTextGap(10);
@@ -135,10 +146,12 @@ public class ManagerPage extends javax.swing.JFrame {
         CusComplaintsBtn.setForeground(new java.awt.Color(255, 255, 255));
         CusComplaintsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/complaint.png"))); // NOI18N
         CusComplaintsBtn.setText("Customer Complaints");
-        CusComplaintsBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        CusComplaintsBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         CusComplaintsBtn.setBorderPainted(false);
         CusComplaintsBtn.setContentAreaFilled(false);
         CusComplaintsBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CusComplaintsBtn.setFocusPainted(false);
+        CusComplaintsBtn.setFocusable(false);
         CusComplaintsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         CusComplaintsBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         CusComplaintsBtn.setIconTextGap(10);
@@ -154,10 +167,12 @@ public class ManagerPage extends javax.swing.JFrame {
         RmvItemBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove.png"))); // NOI18N
         RmvItemBtn.setText("Remove Vendor Item");
         RmvItemBtn.setToolTipText("");
-        RmvItemBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        RmvItemBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         RmvItemBtn.setBorderPainted(false);
         RmvItemBtn.setContentAreaFilled(false);
         RmvItemBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RmvItemBtn.setFocusPainted(false);
+        RmvItemBtn.setFocusable(false);
         RmvItemBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         RmvItemBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         RmvItemBtn.setIconTextGap(10);
@@ -189,10 +204,12 @@ public class ManagerPage extends javax.swing.JFrame {
         LogoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logout.png"))); // NOI18N
         LogoutBtn.setText("Logout");
         LogoutBtn.setToolTipText("");
-        LogoutBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        LogoutBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         LogoutBtn.setBorderPainted(false);
         LogoutBtn.setContentAreaFilled(false);
         LogoutBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LogoutBtn.setFocusPainted(false);
+        LogoutBtn.setFocusable(false);
         LogoutBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         LogoutBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         LogoutBtn.setIconTextGap(10);
@@ -448,7 +465,7 @@ public class ManagerPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ManagerPage().setVisible(true);
+                new ManagerPage(null).setVisible(true);
             }
         });
     }

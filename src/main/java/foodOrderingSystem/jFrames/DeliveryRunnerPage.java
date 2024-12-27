@@ -10,6 +10,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class DeliveryRunnerPage extends javax.swing.JFrame {
 
@@ -36,9 +37,15 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     Icon defaultIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
     Icon hoverIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
     
-    public DeliveryRunnerPage() {
+    public DeliveryRunnerPage(String username) {
+        
+        try { 
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch(Exception ignored){}
+        
         initComponents();
         
+        WelcomeLbl.setText("Welcome, " + username);
                          
         JButton[] allButtons = {TasksBtn, TaskStatusBtn, TaskHisBtn, CusReviewsBtn, RevenueBtn, NotificationBtn, LogoutBtn};      
         
@@ -113,10 +120,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TasksBtn.setForeground(new java.awt.Color(255, 255, 255));
         TasksBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/task.png"))); // NOI18N
         TasksBtn.setText("Tasks");
-        TasksBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        TasksBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         TasksBtn.setBorderPainted(false);
         TasksBtn.setContentAreaFilled(false);
         TasksBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        TasksBtn.setFocusPainted(false);
+        TasksBtn.setFocusable(false);
         TasksBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         TasksBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         TasksBtn.setIconTextGap(10);
@@ -131,10 +140,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TaskStatusBtn.setForeground(new java.awt.Color(255, 255, 255));
         TaskStatusBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/task-status.png"))); // NOI18N
         TaskStatusBtn.setText("Task Status");
-        TaskStatusBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        TaskStatusBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         TaskStatusBtn.setBorderPainted(false);
         TaskStatusBtn.setContentAreaFilled(false);
         TaskStatusBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        TaskStatusBtn.setFocusPainted(false);
+        TaskStatusBtn.setFocusable(false);
         TaskStatusBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         TaskStatusBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         TaskStatusBtn.setIconTextGap(10);
@@ -149,10 +160,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TaskHisBtn.setForeground(new java.awt.Color(255, 255, 255));
         TaskHisBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/task-history.png"))); // NOI18N
         TaskHisBtn.setText("Task History");
-        TaskHisBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4)));
+        TaskHisBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         TaskHisBtn.setBorderPainted(false);
         TaskHisBtn.setContentAreaFilled(false);
         TaskHisBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        TaskHisBtn.setFocusPainted(false);
+        TaskHisBtn.setFocusable(false);
         TaskHisBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         TaskHisBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         TaskHisBtn.setIconTextGap(10);
@@ -168,10 +181,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         CusReviewsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/review.png"))); // NOI18N
         CusReviewsBtn.setText("Customer Reviews");
         CusReviewsBtn.setToolTipText("");
-        CusReviewsBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        CusReviewsBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         CusReviewsBtn.setBorderPainted(false);
         CusReviewsBtn.setContentAreaFilled(false);
         CusReviewsBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CusReviewsBtn.setFocusPainted(false);
+        CusReviewsBtn.setFocusable(false);
         CusReviewsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         CusReviewsBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         CusReviewsBtn.setIconTextGap(10);
@@ -203,10 +218,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         LogoutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logout.png"))); // NOI18N
         LogoutBtn.setText("Logout");
         LogoutBtn.setToolTipText("");
-        LogoutBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        LogoutBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         LogoutBtn.setBorderPainted(false);
         LogoutBtn.setContentAreaFilled(false);
         LogoutBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LogoutBtn.setFocusPainted(false);
+        LogoutBtn.setFocusable(false);
         LogoutBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         LogoutBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         LogoutBtn.setIconTextGap(10);
@@ -222,10 +239,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         RevenueBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/profit.png"))); // NOI18N
         RevenueBtn.setText("Revenue");
         RevenueBtn.setToolTipText("");
-        RevenueBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        RevenueBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         RevenueBtn.setBorderPainted(false);
         RevenueBtn.setContentAreaFilled(false);
         RevenueBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RevenueBtn.setFocusPainted(false);
+        RevenueBtn.setFocusable(false);
         RevenueBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         RevenueBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         RevenueBtn.setIconTextGap(10);
@@ -241,10 +260,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         NotificationBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bell.png"))); // NOI18N
         NotificationBtn.setText("Notification");
         NotificationBtn.setToolTipText("");
-        NotificationBtn.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 16, 5, 10), javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255))));
+        NotificationBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
         NotificationBtn.setBorderPainted(false);
         NotificationBtn.setContentAreaFilled(false);
         NotificationBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        NotificationBtn.setFocusPainted(false);
+        NotificationBtn.setFocusable(false);
         NotificationBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         NotificationBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         NotificationBtn.setIconTextGap(10);
@@ -558,7 +579,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DeliveryRunnerPage().setVisible(true);
+                new DeliveryRunnerPage(null).setVisible(true);
             }
         });
     }
