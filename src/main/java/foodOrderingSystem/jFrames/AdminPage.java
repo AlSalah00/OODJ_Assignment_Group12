@@ -67,7 +67,8 @@ public class AdminPage extends javax.swing.JFrame {
         initComponents();  
                    
         WelcomeLbl.setText("Welcome, " + username);
-        TableHeaderStyle();
+        TableHeaderStyle(UsersTable);
+        TableHeaderStyle(UsersTable_TopUp);
         
         UsersTable.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
@@ -78,6 +79,7 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
         this.refreshData(PasswordsChkBox.isSelected());
+        this.refreshBalance();
         
         JButton[] allButtons = {UserRegBtn, TopUpBtn, TransactionBtn, ReceiptsBtn, LogoutBtn};      
         
@@ -114,8 +116,8 @@ public class AdminPage extends javax.swing.JFrame {
     }
     
     // customizing the table appearance
-    private void TableHeaderStyle() {
-        JTableHeader header = UsersTable.getTableHeader();
+    private void TableHeaderStyle(JTable table) {
+        JTableHeader header = table.getTableHeader();
         header.setOpaque(false);
         header.setDefaultRenderer(new DefaultTableCellRenderer() {
         @Override
@@ -130,7 +132,7 @@ public class AdminPage extends javax.swing.JFrame {
             return label;
         }
         });
-    }
+    }   
     
     private void resetFields() {
         
@@ -234,6 +236,26 @@ public class AdminPage extends javax.swing.JFrame {
         }
     }
     
+    private void refreshBalance() {
+        
+        User user = new User();
+        
+        DefaultTableModel model = (DefaultTableModel) UsersTable_TopUp.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = user.viewBalance();
+        String[][] data = records.toArray(new String[0][0]);
+        
+        for (String[] userDetails : data) {
+            String id = userDetails[0];
+            String username = userDetails[1];
+            String balance = userDetails[2];          
+            
+            model.addRow(
+                    new Object[]{id, username, balance});
+        }
+    }
+    
     private void populateForm() {
         
         int selectedRow = UsersTable.getSelectedRow();
@@ -329,6 +351,41 @@ public class AdminPage extends javax.swing.JFrame {
         user.delUser();
         refreshData(PasswordsChkBox.isSelected()); 
     }
+    
+    private void topUp() {
+        
+        if ("Amount".equals(AmountTxt.getText())) {
+           
+            JOptionPane.showMessageDialog(null, "Please enter amount first!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int amount = Integer.parseInt(AmountTxt.getText());
+        
+        int selectedRow = UsersTable_TopUp.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No user selected for top-up!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String Id = (String) UsersTable_TopUp.getValueAt(selectedRow, 0);
+        String username = (String) UsersTable_TopUp.getValueAt(selectedRow, 1);
+        String balance = (String) UsersTable_TopUp.getValueAt(selectedRow, 2);
+        
+        if (amount > 0) {
+            
+            int newBalance = Integer.parseInt(balance);
+            newBalance += amount;
+            
+            User user = new User(Id, username, String.valueOf(newBalance));
+            user.TopUp();
+            refreshBalance();
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -369,10 +426,18 @@ public class AdminPage extends javax.swing.JFrame {
         SearchTxt = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         TopUpPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        UsersTable_TopUp = new javax.swing.JTable();
+        AmountTxt = new javax.swing.JTextField();
+        Separator4 = new javax.swing.JPanel();
+        ConfirmBtn = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        SearchTxt_TopUp = new javax.swing.JTextField();
         TransactionsPanel = new javax.swing.JPanel();
         ReceiptsPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
 
         BackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -562,7 +627,7 @@ public class AdminPage extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(PageTypeLbl))
                     .addComponent(WelcomeLbl))
-                .addContainerGap(283, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
         WelcomePanelLayout.setVerticalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -706,6 +771,11 @@ public class AdminPage extends javax.swing.JFrame {
         UsersTable.setShowGrid(true);
         UsersTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(UsersTable);
+        if (UsersTable.getColumnModel().getColumnCount() > 0) {
+            UsersTable.getColumnModel().getColumn(3).setHeaderValue("Phone No.");
+            UsersTable.getColumnModel().getColumn(4).setHeaderValue("Password");
+            UsersTable.getColumnModel().getColumn(5).setHeaderValue("Role");
+        }
 
         RoleComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         RoleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Manager", "Customer", "Delivery Runner", "Vendor" }));
@@ -714,6 +784,7 @@ public class AdminPage extends javax.swing.JFrame {
         RoleComboBox.setFocusable(false);
         RoleComboBox.setOpaque(true);
 
+        RoleLbl.setBackground(new java.awt.Color(255, 255, 255));
         RoleLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         RoleLbl.setText("Role");
 
@@ -850,7 +921,7 @@ public class AdminPage extends javax.swing.JFrame {
                                     .addComponent(PasswordsChkBox))
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 42, Short.MAX_VALUE))))
+                        .addGap(0, 56, Short.MAX_VALUE))))
         );
         UserRegPanelLayout.setVerticalGroup(
             UserRegPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -900,15 +971,145 @@ public class AdminPage extends javax.swing.JFrame {
 
         TopUpPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        UsersTable_TopUp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        UsersTable_TopUp.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "ID", "Username", "Balance (RM)"
+            }
+        ));
+        UsersTable_TopUp.setFocusable(false);
+        UsersTable_TopUp.setGridColor(new java.awt.Color(0, 0, 0));
+        UsersTable_TopUp.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        UsersTable_TopUp.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        UsersTable_TopUp.setShowGrid(true);
+        UsersTable_TopUp.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(UsersTable_TopUp);
+
+        AmountTxt.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        AmountTxt.setForeground(java.awt.Color.gray);
+        AmountTxt.setText("Amount");
+        AmountTxt.setBorder(null);
+        AmountTxt.setFocusable(false);
+        AmountTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                AmountTxtFocusLost(evt);
+            }
+        });
+        AmountTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AmountTxtMouseClicked(evt);
+            }
+        });
+
+        Separator4.setBackground(new java.awt.Color(0, 0, 0));
+        Separator4.setMaximumSize(new java.awt.Dimension(300, 1));
+        Separator4.setMinimumSize(new java.awt.Dimension(0, 1));
+
+        javax.swing.GroupLayout Separator4Layout = new javax.swing.GroupLayout(Separator4);
+        Separator4.setLayout(Separator4Layout);
+        Separator4Layout.setHorizontalGroup(
+            Separator4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+        Separator4Layout.setVerticalGroup(
+            Separator4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        ConfirmBtn.setBackground(new java.awt.Color(255, 153, 0));
+        ConfirmBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        ConfirmBtn.setForeground(new java.awt.Color(255, 255, 255));
+        ConfirmBtn.setText("Confirm");
+        ConfirmBtn.setBorder(null);
+        ConfirmBtn.setBorderPainted(false);
+        ConfirmBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ConfirmBtn.setFocusPainted(false);
+        ConfirmBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ConfirmBtnMouseClicked(evt);
+            }
+        });
+        ConfirmBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ConfirmBtnActionPerformed(evt);
+            }
+        });
+
+        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 306, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        SearchTxt_TopUp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        SearchTxt_TopUp.setForeground(java.awt.Color.gray);
+        SearchTxt_TopUp.setText("Search");
+        SearchTxt_TopUp.setBorder(null);
+        SearchTxt_TopUp.setFocusable(false);
+        SearchTxt_TopUp.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                SearchTxt_TopUpFocusLost(evt);
+            }
+        });
+        SearchTxt_TopUp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SearchTxt_TopUpMouseClicked(evt);
+            }
+        });
+        SearchTxt_TopUp.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                SearchTxt_TopUpKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout TopUpPanelLayout = new javax.swing.GroupLayout(TopUpPanel);
         TopUpPanel.setLayout(TopUpPanelLayout);
         TopUpPanelLayout.setHorizontalGroup(
             TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(TopUpPanelLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SearchTxt_TopUp)
+                    .addGroup(TopUpPanelLayout.createSequentialGroup()
+                        .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ConfirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(AmountTxt)
+                                .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 58, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         TopUpPanelLayout.setVerticalGroup(
             TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopUpPanelLayout.createSequentialGroup()
+                .addContainerGap(177, Short.MAX_VALUE)
+                .addComponent(AmountTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(ConfirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57)
+                .addComponent(SearchTxt_TopUp, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addGap(1, 1, 1)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34))
         );
 
         ParentPanel.add(TopUpPanel, "card4");
@@ -919,7 +1120,7 @@ public class AdminPage extends javax.swing.JFrame {
         TransactionsPanel.setLayout(TransactionsPanelLayout);
         TransactionsPanelLayout.setHorizontalGroup(
             TransactionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGap(0, 654, Short.MAX_VALUE)
         );
         TransactionsPanelLayout.setVerticalGroup(
             TransactionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -934,7 +1135,7 @@ public class AdminPage extends javax.swing.JFrame {
         ReceiptsPanel.setLayout(ReceiptsPanelLayout);
         ReceiptsPanelLayout.setHorizontalGroup(
             ReceiptsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGap(0, 654, Short.MAX_VALUE)
         );
         ReceiptsPanelLayout.setVerticalGroup(
             ReceiptsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1168,6 +1369,86 @@ public class AdminPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_SearchTxtFocusLost
 
+    private void AmountTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_AmountTxtFocusLost
+        if ("".equals(AmountTxt.getText())) {
+            AmountTxt.setText("Amount");
+            AmountTxt.setForeground(Color.gray);
+            AmountTxt.setFocusable(false);
+        }
+    }//GEN-LAST:event_AmountTxtFocusLost
+
+    private void AmountTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AmountTxtMouseClicked
+        
+        AmountTxt.setFocusable(true);
+        AmountTxt.requestFocusInWindow();
+        AmountTxt.setForeground(Color.black);
+        
+        if ("Amount".equals(AmountTxt.getText())) {
+            AmountTxt.setText("");
+        }
+    }//GEN-LAST:event_AmountTxtMouseClicked
+
+    private void ConfirmBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ConfirmBtnMouseClicked
+        topUp();
+        refreshBalance();
+    }//GEN-LAST:event_ConfirmBtnMouseClicked
+
+    private void SearchTxt_TopUpFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_SearchTxt_TopUpFocusLost
+        if ("".equals(SearchTxt_TopUp.getText())) {
+            SearchTxt_TopUp.setText("Search");
+            SearchTxt_TopUp.setForeground(Color.gray);
+            SearchTxt_TopUp.setFocusable(false);
+        }
+    }//GEN-LAST:event_SearchTxt_TopUpFocusLost
+
+    private void SearchTxt_TopUpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SearchTxt_TopUpMouseClicked
+        SearchTxt_TopUp.setFocusable(true);
+        SearchTxt_TopUp.requestFocusInWindow();
+        SearchTxt_TopUp.setForeground(Color.black);
+        
+        if ("Search".equals(SearchTxt_TopUp.getText())) {
+            SearchTxt_TopUp.setText("");
+        }
+    }//GEN-LAST:event_SearchTxt_TopUpMouseClicked
+
+    private void SearchTxt_TopUpKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchTxt_TopUpKeyReleased
+        
+        try {
+            String searchText = SearchTxt_TopUp.getText().trim();
+            DefaultTableModel model = (DefaultTableModel) UsersTable_TopUp.getModel();
+            model.setRowCount(0);
+
+            if (searchText.isEmpty()) {
+                refreshBalance();
+            }
+
+            FileReader fr = new FileReader("Balance.txt");
+            BufferedReader br = new BufferedReader(fr);
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split("--");
+                String id = data[0].trim();
+                String username = data[1].trim();
+                String balance = data[2].trim();
+                
+                if (id.equalsIgnoreCase(searchText)
+                        || username.equalsIgnoreCase(searchText)
+                        || balance.equalsIgnoreCase(searchText)
+                    ) {
+                    model.addRow(new Object[]{id, username, balance});
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occured while reading the file." + e.getMessage());
+        }
+    }//GEN-LAST:event_SearchTxt_TopUpKeyReleased
+
+    private void ConfirmBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConfirmBtnActionPerformed
+   
+    }//GEN-LAST:event_ConfirmBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1205,8 +1486,10 @@ public class AdminPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddUserBtn;
+    private javax.swing.JTextField AmountTxt;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
+    private javax.swing.JButton ConfirmBtn;
     private javax.swing.JButton DelBtn;
     private javax.swing.JButton EditBtn;
     private javax.swing.JLabel EmailExampleLbl;
@@ -1223,9 +1506,11 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> RoleComboBox;
     private javax.swing.JLabel RoleLbl;
     private javax.swing.JTextField SearchTxt;
+    private javax.swing.JTextField SearchTxt_TopUp;
     private javax.swing.JPanel Separator1;
     private javax.swing.JPanel Separator2;
     private javax.swing.JPanel Separator3;
+    private javax.swing.JPanel Separator4;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JButton TopUpBtn;
@@ -1237,9 +1522,12 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JLabel UsernameExampleLbl;
     private javax.swing.JTextField UsernameTxt;
     private javax.swing.JTable UsersTable;
+    private javax.swing.JTable UsersTable_TopUp;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }

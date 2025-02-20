@@ -8,7 +8,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import javax.swing.JOptionPane;
 
 
@@ -20,35 +23,27 @@ public class Order {
     private String Vendor;
     private String Date;
     private String total;
+    private String ItemName;
+    private String Quantity;
     private String Status;
     
     
-    private String ItemName;
-    private String Quantity;
-    
-    
-    public Order(String OrderId,String CustomerName, String Vendor,String Date, String total, String Status,String ItemName, String Quantity){
+    public Order(String OrderId, String CustomerName, String Vendor, String Date, String total, 
+            String ItemName, String Quantity, String Status) {
     
         this.OrderId = OrderId;
         this.CustomerName = CustomerName;
         this.Vendor = Vendor;
         this.Date = Date;
         this.total = total;
-        this.Status = Status;
         this.ItemName = ItemName;
-        this.Quantity = Quantity;
-                
-    
+        this.Quantity = Quantity;  
+        this.Status = Status;
     }
     
      public Order() {
          
      }
-    
-    public Order(String OrderId, String Status) {
-        this.OrderId = OrderId;
-        this.Status = Status;
-    }
     
     public String getOrderId() {
         return OrderId;
@@ -114,26 +109,27 @@ public class Order {
         this.Quantity = Quantity;
     }
     
+        
+       
+        
     public void addOrder() {
  
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("Order.txt", true))) {
-            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + Date + "--" + total + "--" + Status);
+            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + Date + "--" + total + "--" + 
+                    ItemName + "--" + Quantity + "--" + Status);
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Order placed successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not place order." , "Error", JOptionPane.ERROR_MESSAGE);
         }
          
-       
-            
-            
+                          
             
     }           
      public void updateOrderStatus() {
-     
-         
+       
           try {
-            BufferedReader br = new BufferedReader(new FileReader("User.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("Order.txt"));
             ArrayList<String> lines = new ArrayList<>();
             String line;
             
@@ -154,9 +150,9 @@ public class Order {
                             + Vendor + "--"
                             + Date + "--"
                             + total + "--"
-                            + Status + "--"
                             + ItemName + "--"
                             + Quantity + "--"
+                            + Status + "\n"
                             
                     );
                 } else {
@@ -165,7 +161,7 @@ public class Order {
             }
             fw.close();
             
-            JOptionPane.showMessageDialog(null, "Record updated successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Status updated successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
         } 
         catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

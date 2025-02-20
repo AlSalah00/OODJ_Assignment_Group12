@@ -20,32 +20,40 @@ import javax.swing.JOptionPane;
  * @author ADEEL
  */
 public class Item {
-    
+   
     private String itemId;
+    private String vendor;
     private String itemPrice;
     private String itemName;
     private String itemType;
     
-    public Item(String itemId,String itemPrice,String itemName,String itemType) {
+    public Item(String itemId, String vendor, String itemPrice,String itemName,String itemType) {
         this.itemId = itemId;
+        this.vendor = vendor;
         this.itemPrice = itemPrice;
         this.itemName = itemName;
         this.itemType = itemType;
           
     }
     
-    public Item(String itemPrice,String itemName,String itemType) {
-        this.itemPrice = itemId;
-        this.itemName = itemId;
-        this.itemType = itemId;
-          
+    public Item(String itemPrice, String itemName, String itemType) {
+        
+        this.itemPrice = itemPrice;
+        this.itemName = itemName;
+        this.itemType = itemType;  
     }
     
     public Item() {
         
     }
- public String getItemId() {
+    
+    
+    public String getItemId() {
         return itemId;
+    }
+    
+    public String getVendor() {
+        return vendor;
     }
 
     public String getItemPrice() {
@@ -60,7 +68,25 @@ public class Item {
         return itemType;
     }
     
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
     
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+    
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+    
+    public void setItemPrice(String itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+    
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
  
     public void addItem() {
         

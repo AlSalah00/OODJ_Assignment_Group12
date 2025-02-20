@@ -1,27 +1,49 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.Order;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import static java.awt.SystemColor.text;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class CustomerPage extends javax.swing.JFrame {
 
+    Color orange = new Color(255, 153, 0, 255);  
     
+    private double total = 0.0;
+    private String totalQuantity = "";
     
     Icon defaultIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menu.png"));
     Icon hoverIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menuHover.png"));
@@ -53,7 +75,9 @@ public class CustomerPage extends javax.swing.JFrame {
         initComponents();
         
         WelcomeLbl.setText("Welcome, " + username);
+        TableHeaderStyle(MenuTable);
         
+        OrderList.setModel(new DefaultListModel<>());
                          
         JButton[] allButtons = {MenuBtn, OrderStatusBtn, OrderHisBtn, TransactionHisBtn, ReviewsBtn, NotificationBtn, LogoutBtn};      
         
@@ -65,6 +89,24 @@ public class CustomerPage extends javax.swing.JFrame {
         ButtonStyler.applyMouseEffects(NotificationBtn, allButtons, defaultIcon6, hoverIcon6);
         ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon7, hoverIcon7);
     }
+    
+    private void TableHeaderStyle(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+            label.setBackground(orange);
+            label.setForeground(Color.white);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            return label;
+        }
+        });
+    }   
     
     private void resetToDefault() {
         ButtonStyler.applyDefaultStyle(MenuBtn, defaultIcon1);
@@ -107,6 +149,115 @@ public class CustomerPage extends javax.swing.JFrame {
             Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void refreshMenu() {
+        
+        Item item = new Item();
+        
+        DefaultTableModel model = (DefaultTableModel) MenuTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = item.ViewItems();
+        String[][] data = records.toArray(new String[0][0]);
+        
+        for (String[] itemDetails : data) {
+            String id = itemDetails[0];
+            String itemName = itemDetails[2];
+            String itemPrice = itemDetails[3];
+            String itemType = itemDetails[4];          
+            
+            model.addRow(
+                    new Object[]{id, itemName, itemPrice, itemType
+                        });
+        }
+    }
+    
+    
+    private static Set<String> getExistingIDs() {
+        Set<String> existingIDs = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("Order.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split("--");
+                if (data.length > 0) {
+                    existingIDs.add(data[0]);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+        return existingIDs;
+    }
+    
+    public static String generateID() {
+        
+        Random random = new Random();
+        Set<String> existingIDs = getExistingIDs();
+        
+        StringBuilder ID = new StringBuilder();
+        String newID;
+        
+        do {
+            ID.setLength(0);
+            for (int i = 0; i < 3; i++) {
+                int randomDigit = random.nextInt(10);
+                ID.append(randomDigit);
+            }
+            newID = "O0" + ID.toString();
+        } while (existingIDs.contains(newID));
+        
+        return newID;
+    }     
+    
+    
+    private void placeOrder() {
+                
+        if (OrderList.getModel().getSize() == 0) {
+            JOptionPane.showMessageDialog(null, "Your order list is empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        String orderID = generateID();
+        String name = WelcomeLbl.getText();
+        String[] parts = name.split(", ");
+        
+        String CustomerName = parts[1];
+        String vendor = RestaurantsComboBox.getSelectedItem().toString();
+        String items = OrderList.getModel().toString();
+        String date = java.time.LocalDate.now().toString();
+        String fullItems = String.join(",", items);
+        
+        Order order = new Order(orderID, CustomerName, vendor, date, 
+                String.valueOf(total), fullItems, totalQuantity, "Pending");
+        order.addOrder();
+    }
+    
+    private void addToOrder() {
+        
+        int selectedRow = MenuTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No item selected!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String itemName = (String) MenuTable.getValueAt(selectedRow, 1);
+        String price = (String) MenuTable.getValueAt(selectedRow, 2);
+        int quantity = (int) QuantitySpinner.getValue();
+        DefaultListModel<String> listModel = (DefaultListModel<String>) OrderList.getModel();
+        listModel.addElement(itemName);
+        
+        if (!totalQuantity.isEmpty()) {
+            totalQuantity += ", ";    
+        }
+        
+        totalQuantity += String.valueOf(quantity);
+        
+        double dPrice = Double.parseDouble(price);
+        total += (dPrice * quantity);
+        
+        AmountLbl.setText(Double.toString(total));
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -134,6 +285,15 @@ public class CustomerPage extends javax.swing.JFrame {
         OrderBtn = new javax.swing.JButton();
         RestaurantsComboBox = new javax.swing.JComboBox<>();
         RestaurantsLbl = new javax.swing.JLabel();
+        QuantitySpinner = new javax.swing.JSpinner();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        OrderList = new javax.swing.JList<>();
+        QuantityLbl = new javax.swing.JLabel();
+        AddItemBtn = new javax.swing.JButton();
+        TotalLbl = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        CurrencyLbl = new javax.swing.JLabel();
+        AmountLbl = new javax.swing.JLabel();
         OrderStatusPanel = new javax.swing.JPanel();
         OrderHistoryPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -387,7 +547,7 @@ public class CustomerPage extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(PageTypeLbl))
                     .addComponent(WelcomeLbl))
-                .addContainerGap(283, Short.MAX_VALUE))
+                .addContainerGap(314, Short.MAX_VALUE))
         );
         WelcomePanelLayout.setVerticalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -413,7 +573,7 @@ public class CustomerPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "ID", "ItemPrice", "ItemName", "ItemType"
+                "ID", "ItemName", "ItemPrice", "ItemType"
             }
         ));
         MenuTable.setFocusable(false);
@@ -423,15 +583,11 @@ public class CustomerPage extends javax.swing.JFrame {
         MenuTable.setShowGrid(true);
         MenuTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(MenuTable);
-        if (MenuTable.getColumnModel().getColumnCount() > 0) {
-            MenuTable.getColumnModel().getColumn(0).setHeaderValue("ID");
-            MenuTable.getColumnModel().getColumn(3).setHeaderValue("ItemType");
-        }
 
         OrderBtn.setBackground(new java.awt.Color(255, 153, 0));
         OrderBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         OrderBtn.setForeground(new java.awt.Color(255, 255, 255));
-        OrderBtn.setText("Order");
+        OrderBtn.setText("Confirm Order");
         OrderBtn.setBorder(null);
         OrderBtn.setBorderPainted(false);
         OrderBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -452,31 +608,116 @@ public class CustomerPage extends javax.swing.JFrame {
         RestaurantsLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         RestaurantsLbl.setText("Restaurants");
 
+        QuantitySpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        QuantitySpinner.setFocusable(false);
+
+        jScrollPane6.setViewportView(OrderList);
+
+        QuantityLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        QuantityLbl.setText("Quantity");
+
+        AddItemBtn.setBackground(new java.awt.Color(255, 153, 0));
+        AddItemBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AddItemBtn.setForeground(new java.awt.Color(255, 255, 255));
+        AddItemBtn.setText("Add +");
+        AddItemBtn.setBorder(null);
+        AddItemBtn.setBorderPainted(false);
+        AddItemBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        AddItemBtn.setFocusPainted(false);
+        AddItemBtn.setFocusable(false);
+        AddItemBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AddItemBtnMouseClicked(evt);
+            }
+        });
+
+        TotalLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        TotalLbl.setText("Total");
+
+        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        CurrencyLbl.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        CurrencyLbl.setText("RM");
+
+        AmountLbl.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        AmountLbl.setText("0");
+
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuPanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(RestaurantsLbl)
-                    .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(MenuPanelLayout.createSequentialGroup()
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(OrderBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                                .addComponent(TotalLbl)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(MenuPanelLayout.createSequentialGroup()
+                                .addComponent(CurrencyLbl)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(AmountLbl)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(53, Short.MAX_VALUE))
+                    .addGroup(MenuPanelLayout.createSequentialGroup()
+                        .addComponent(RestaurantsLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(QuantityLbl))
+                    .addGroup(MenuPanelLayout.createSequentialGroup()
+                        .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(AddItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(QuantitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         MenuPanelLayout.setVerticalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap(76, Short.MAX_VALUE)
-                .addComponent(RestaurantsLbl)
-                .addGap(18, 18, 18)
-                .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(101, 101, 101)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45))
+                .addGap(53, 53, 53)
+                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(RestaurantsLbl, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(QuantityLbl, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(MenuPanelLayout.createSequentialGroup()
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(MenuPanelLayout.createSequentialGroup()
+                                .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addGroup(MenuPanelLayout.createSequentialGroup()
+                                .addComponent(QuantitySpinner)
+                                .addGap(23, 23, 23)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(MenuPanelLayout.createSequentialGroup()
+                                .addComponent(TotalLbl)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(CurrencyLbl)
+                                    .addComponent(AmountLbl))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(AddItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         ParentPanel.add(MenuPanel, "card3");
@@ -487,7 +728,7 @@ public class CustomerPage extends javax.swing.JFrame {
         OrderStatusPanel.setLayout(OrderStatusPanelLayout);
         OrderStatusPanelLayout.setHorizontalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGap(0, 671, Short.MAX_VALUE)
         );
         OrderStatusPanelLayout.setVerticalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -525,7 +766,7 @@ public class CustomerPage extends javax.swing.JFrame {
             .addGroup(OrderHistoryPanelLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         OrderHistoryPanelLayout.setVerticalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -569,7 +810,7 @@ public class CustomerPage extends javax.swing.JFrame {
             .addGroup(TransactionHisPanelLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         TransactionHisPanelLayout.setVerticalGroup(
             TransactionHisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -629,7 +870,7 @@ public class CustomerPage extends javax.swing.JFrame {
         ReviewsPanel.setLayout(ReviewsPanelLayout);
         ReviewsPanelLayout.setHorizontalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGap(0, 671, Short.MAX_VALUE)
             .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(ReviewsPanelLayout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -680,7 +921,7 @@ public class CustomerPage extends javax.swing.JFrame {
             .addGroup(NotificationPanelLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         NotificationPanelLayout.setVerticalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -730,6 +971,7 @@ public class CustomerPage extends javax.swing.JFrame {
         resetToDefault();
         ButtonStyler.applyHoverStyle(MenuBtn, hoverIcon1);
         refreshRestaurants();
+        refreshMenu();
     }//GEN-LAST:event_MenuBtnActionPerformed
 
     private void OrderStatusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrderStatusBtnActionPerformed
@@ -787,9 +1029,12 @@ public class CustomerPage extends javax.swing.JFrame {
     }//GEN-LAST:event_NotificationBtnActionPerformed
 
     private void OrderBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrderBtnMouseClicked
-        //addUser();
-        //resetFields();
+        placeOrder();
     }//GEN-LAST:event_OrderBtnMouseClicked
+
+    private void AddItemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddItemBtnMouseClicked
+        addToOrder();
+    }//GEN-LAST:event_AddItemBtnMouseClicked
 
     /**
      * @param args the command line arguments
@@ -828,8 +1073,11 @@ public class CustomerPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddItemBtn;
+    private javax.swing.JLabel AmountLbl;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
+    private javax.swing.JLabel CurrencyLbl;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton MenuBtn;
@@ -841,10 +1089,13 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JButton OrderBtn;
     private javax.swing.JButton OrderHisBtn;
     private javax.swing.JPanel OrderHistoryPanel;
+    private javax.swing.JList<String> OrderList;
     private javax.swing.JButton OrderStatusBtn;
     private javax.swing.JPanel OrderStatusPanel;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
+    private javax.swing.JLabel QuantityLbl;
+    private javax.swing.JSpinner QuantitySpinner;
     private javax.swing.JComboBox<String> RestaurantsComboBox;
     private javax.swing.JLabel RestaurantsLbl;
     private javax.swing.JButton ReviewsBtn;
@@ -853,16 +1104,20 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JTable ReviewsTable1;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
+    private javax.swing.JLabel TotalLbl;
     private javax.swing.JButton TransactionHisBtn;
     private javax.swing.JPanel TransactionHisPanel;
     private javax.swing.JTable TransactionTable;
     private javax.swing.JTable TransactionTable1;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     // End of variables declaration//GEN-END:variables
 }

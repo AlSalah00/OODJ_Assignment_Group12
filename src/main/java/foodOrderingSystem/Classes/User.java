@@ -22,6 +22,7 @@ public class User {
     private String phoneNo;
     private String password;
     private String role;
+    private String balance;
     
     public User(String ID, String username, String email, String phoneNo, String password, String role) {
         this.ID = ID;
@@ -34,6 +35,12 @@ public class User {
     
     public User(String ID) {
         this.ID = ID;
+    }
+    
+    public User(String ID, String username, String balance) {
+        this.ID = ID;
+        this.username = username;
+        this.balance = balance;
     }
     
     public User() {}
@@ -62,6 +69,10 @@ public class User {
         return role;
     }
     
+    public String getBalance() {
+        return balance;
+    }
+    
     public void setID(String ID) {
         this.ID = ID;
     }
@@ -84,6 +95,10 @@ public class User {
     
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
     
     public static boolean usernameExists(String filePath, String username) {
@@ -114,6 +129,13 @@ public class User {
             JOptionPane.showMessageDialog(null, "User data saved successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not save user data." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+            
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Balance.txt", true))) {
+            writer.write(ID + "--" + username + "--" + 0);
+            writer.newLine();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Could not save user balance." , "Error", JOptionPane.ERROR_MESSAGE);
         }
         }      
        
@@ -233,5 +255,59 @@ public class User {
             JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
         }
         return null;
+    }
+    
+    public List<String[]> viewBalance() {
+        
+        List<String[]> records = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader("Balance.txt"))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                records.add(data);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+
+        return records;
+    }
+    
+    public void TopUp() {
+        
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("Balance.txt"));
+            ArrayList<String> lines = new ArrayList<>();
+            String line;
+            
+            while ((line = br.readLine()) != null) {
+                lines.add(line);               
+            }
+            br.close();
+            
+            FileWriter fw = new FileWriter("Balance.txt");
+            for (int i = 0; i < lines.size(); i++) {
+                String existingLine = lines.get(i);
+                String[] data = existingLine.split("--");
+
+                if (data[0].equals(ID)) { 
+                    fw.write(
+                            ID + "--"
+                            + username + "--"
+                            + balance + "\n"
+                    );
+                } else {
+                    fw.write(existingLine + "\n");
+                }
+            }
+            fw.close();
+            
+            JOptionPane.showMessageDialog(null, "Top up successful.","Info",JOptionPane.INFORMATION_MESSAGE);
+        } 
+        catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        } 
     }
 }
