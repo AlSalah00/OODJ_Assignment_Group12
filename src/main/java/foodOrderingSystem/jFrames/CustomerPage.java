@@ -6,9 +6,16 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -46,6 +53,7 @@ public class CustomerPage extends javax.swing.JFrame {
         initComponents();
         
         WelcomeLbl.setText("Welcome, " + username);
+        
                          
         JButton[] allButtons = {MenuBtn, OrderStatusBtn, OrderHisBtn, TransactionHisBtn, ReviewsBtn, NotificationBtn, LogoutBtn};      
         
@@ -82,6 +90,23 @@ public class CustomerPage extends javax.swing.JFrame {
             g2d.fillRect(0, 0, width, height);
         }
     }
+    
+    private void refreshRestaurants() {
+        
+         try (BufferedReader br = new BufferedReader(new FileReader("User.txt"))) {
+             String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("--"); 
+                if (parts.length == 6 && parts[5].trim().equalsIgnoreCase("Vendor")) { 
+                    RestaurantsComboBox.addItem(parts[1].trim());
+                }
+            }
+         } catch (FileNotFoundException ex) {
+            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -104,11 +129,25 @@ public class CustomerPage extends javax.swing.JFrame {
         WelcomeLbl = new javax.swing.JLabel();
         PageTypeLbl = new javax.swing.JLabel();
         MenuPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        MenuTable = new javax.swing.JTable();
+        OrderBtn = new javax.swing.JButton();
+        RestaurantsComboBox = new javax.swing.JComboBox<>();
+        RestaurantsLbl = new javax.swing.JLabel();
         OrderStatusPanel = new javax.swing.JPanel();
         OrderHistoryPanel = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        TransactionTable1 = new javax.swing.JTable();
         TransactionHisPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TransactionTable = new javax.swing.JTable();
         ReviewsPanel = new javax.swing.JPanel();
+        ReviewsPanel1 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        ReviewsTable1 = new javax.swing.JTable();
         NotificationPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        NotificationTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -365,15 +404,79 @@ public class CustomerPage extends javax.swing.JFrame {
 
         MenuPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        MenuTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        MenuTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "ItemPrice", "ItemName", "ItemType"
+            }
+        ));
+        MenuTable.setFocusable(false);
+        MenuTable.setGridColor(new java.awt.Color(0, 0, 0));
+        MenuTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        MenuTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        MenuTable.setShowGrid(true);
+        MenuTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(MenuTable);
+        if (MenuTable.getColumnModel().getColumnCount() > 0) {
+            MenuTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+            MenuTable.getColumnModel().getColumn(3).setHeaderValue("ItemType");
+        }
+
+        OrderBtn.setBackground(new java.awt.Color(255, 153, 0));
+        OrderBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        OrderBtn.setForeground(new java.awt.Color(255, 255, 255));
+        OrderBtn.setText("Order");
+        OrderBtn.setBorder(null);
+        OrderBtn.setBorderPainted(false);
+        OrderBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        OrderBtn.setFocusPainted(false);
+        OrderBtn.setFocusable(false);
+        OrderBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OrderBtnMouseClicked(evt);
+            }
+        });
+
+        RestaurantsComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        RestaurantsComboBox.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        RestaurantsComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RestaurantsComboBox.setFocusable(false);
+        RestaurantsComboBox.setOpaque(true);
+
+        RestaurantsLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        RestaurantsLbl.setText("Restaurants");
+
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(MenuPanelLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(RestaurantsLbl)
+                    .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         MenuPanelLayout.setVerticalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(MenuPanelLayout.createSequentialGroup()
+                .addContainerGap(76, Short.MAX_VALUE)
+                .addComponent(RestaurantsLbl)
+                .addGap(18, 18, 18)
+                .addComponent(RestaurantsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(101, 101, 101)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45))
         );
 
         ParentPanel.add(MenuPanel, "card3");
@@ -395,60 +498,196 @@ public class CustomerPage extends javax.swing.JFrame {
 
         OrderHistoryPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        TransactionTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TransactionTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "OrderID", "Restaurant", "Date", "Paid", "Status"
+            }
+        ));
+        TransactionTable1.setFocusable(false);
+        TransactionTable1.setGridColor(new java.awt.Color(0, 0, 0));
+        TransactionTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TransactionTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TransactionTable1.setShowGrid(true);
+        TransactionTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane5.setViewportView(TransactionTable1);
+
         javax.swing.GroupLayout OrderHistoryPanelLayout = new javax.swing.GroupLayout(OrderHistoryPanel);
         OrderHistoryPanel.setLayout(OrderHistoryPanelLayout);
         OrderHistoryPanelLayout.setHorizontalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(OrderHistoryPanelLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         OrderHistoryPanelLayout.setVerticalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderHistoryPanelLayout.createSequentialGroup()
+                .addContainerGap(219, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(137, 137, 137))
         );
 
         ParentPanel.add(OrderHistoryPanel, "card5");
 
         TransactionHisPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        TransactionTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TransactionTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "OrderID", "Date", "Paid"
+            }
+        ));
+        TransactionTable.setFocusable(false);
+        TransactionTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TransactionTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TransactionTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TransactionTable.setShowGrid(true);
+        TransactionTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(TransactionTable);
+        if (TransactionTable.getColumnModel().getColumnCount() > 0) {
+            TransactionTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+        }
+
         javax.swing.GroupLayout TransactionHisPanelLayout = new javax.swing.GroupLayout(TransactionHisPanel);
         TransactionHisPanel.setLayout(TransactionHisPanelLayout);
         TransactionHisPanelLayout.setHorizontalGroup(
             TransactionHisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(TransactionHisPanelLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         TransactionHisPanelLayout.setVerticalGroup(
             TransactionHisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TransactionHisPanelLayout.createSequentialGroup()
+                .addContainerGap(242, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(114, 114, 114))
         );
 
         ParentPanel.add(TransactionHisPanel, "card6");
 
         ReviewsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        ReviewsPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        ReviewsTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ReviewsTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "OrderID", "Vendor", "Date"
+            }
+        ));
+        ReviewsTable1.setFocusable(false);
+        ReviewsTable1.setGridColor(new java.awt.Color(0, 0, 0));
+        ReviewsTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ReviewsTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ReviewsTable1.setShowGrid(true);
+        ReviewsTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(ReviewsTable1);
+        if (ReviewsTable1.getColumnModel().getColumnCount() > 0) {
+            ReviewsTable1.getColumnModel().getColumn(0).setHeaderValue("ID");
+        }
+
+        javax.swing.GroupLayout ReviewsPanel1Layout = new javax.swing.GroupLayout(ReviewsPanel1);
+        ReviewsPanel1.setLayout(ReviewsPanel1Layout);
+        ReviewsPanel1Layout.setHorizontalGroup(
+            ReviewsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ReviewsPanel1Layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(46, Short.MAX_VALUE))
+        );
+        ReviewsPanel1Layout.setVerticalGroup(
+            ReviewsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ReviewsPanel1Layout.createSequentialGroup()
+                .addContainerGap(238, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(118, 118, 118))
+        );
+
         javax.swing.GroupLayout ReviewsPanelLayout = new javax.swing.GroupLayout(ReviewsPanel);
         ReviewsPanel.setLayout(ReviewsPanelLayout);
         ReviewsPanelLayout.setHorizontalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(ReviewsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         ReviewsPanelLayout.setVerticalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(ReviewsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         ParentPanel.add(ReviewsPanel, "card7");
 
         NotificationPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        NotificationTable2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        NotificationTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Message", "Date"
+            }
+        ));
+        NotificationTable2.setFocusable(false);
+        NotificationTable2.setGridColor(new java.awt.Color(0, 0, 0));
+        NotificationTable2.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        NotificationTable2.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        NotificationTable2.setShowGrid(true);
+        NotificationTable2.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(NotificationTable2);
+        if (NotificationTable2.getColumnModel().getColumnCount() > 0) {
+            NotificationTable2.getColumnModel().getColumn(0).setHeaderValue("ID");
+        }
+
         javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
         NotificationPanel.setLayout(NotificationPanelLayout);
         NotificationPanelLayout.setHorizontalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(NotificationPanelLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         NotificationPanelLayout.setVerticalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
+                .addContainerGap(238, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(118, 118, 118))
         );
 
         ParentPanel.add(NotificationPanel, "card8");
@@ -490,6 +729,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(MenuBtn, hoverIcon1);
+        refreshRestaurants();
     }//GEN-LAST:event_MenuBtnActionPerformed
 
     private void OrderStatusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrderStatusBtnActionPerformed
@@ -546,6 +786,11 @@ public class CustomerPage extends javax.swing.JFrame {
         ButtonStyler.applyHoverStyle(NotificationBtn, hoverIcon6);
     }//GEN-LAST:event_NotificationBtnActionPerformed
 
+    private void OrderBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrderBtnMouseClicked
+        //addUser();
+        //resetFields();
+    }//GEN-LAST:event_OrderBtnMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -589,21 +834,35 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton MenuBtn;
     private javax.swing.JPanel MenuPanel;
+    private javax.swing.JTable MenuTable;
     private javax.swing.JButton NotificationBtn;
     private javax.swing.JPanel NotificationPanel;
+    private javax.swing.JTable NotificationTable2;
+    private javax.swing.JButton OrderBtn;
     private javax.swing.JButton OrderHisBtn;
     private javax.swing.JPanel OrderHistoryPanel;
     private javax.swing.JButton OrderStatusBtn;
     private javax.swing.JPanel OrderStatusPanel;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
+    private javax.swing.JComboBox<String> RestaurantsComboBox;
+    private javax.swing.JLabel RestaurantsLbl;
     private javax.swing.JButton ReviewsBtn;
     private javax.swing.JPanel ReviewsPanel;
+    private javax.swing.JPanel ReviewsPanel1;
+    private javax.swing.JTable ReviewsTable1;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JButton TransactionHisBtn;
     private javax.swing.JPanel TransactionHisPanel;
+    private javax.swing.JTable TransactionTable;
+    private javax.swing.JTable TransactionTable1;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     // End of variables declaration//GEN-END:variables
 }
