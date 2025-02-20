@@ -2,6 +2,7 @@
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.Order;
 import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
@@ -125,7 +126,7 @@ public class VendorPage extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) ItemsTable.getModel();
         model.setRowCount(0);
         
-        List<String[]> records = item.viewAll();
+        List<String[]> records = item.ViewItems();
         String[][] data = records.toArray(new String[0][0]);
         
         for (String[] itemDetails : data) {
@@ -136,6 +137,61 @@ public class VendorPage extends javax.swing.JFrame {
             
             model.addRow(
                     new Object[]{id, itemName, itemPrice, itemType
+                        });
+        }
+    }
+    
+    
+    private void refreshOrders() {
+        
+        Order order = new Order();
+        
+        DefaultTableModel model = (DefaultTableModel) OrderTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = order.ViewOrders();
+        String[][] data = records.toArray(new String[0][0]);
+        
+        for (String[] OrderDetails : data) {
+            String id = OrderDetails[0];
+            String CustomerName = OrderDetails[1];
+            String Vendor = OrderDetails[2];
+            String Date = OrderDetails[3];
+            String total = OrderDetails[4];
+            String Status = OrderDetails[5];
+            String Item = OrderDetails[6];
+            String Quantity = OrderDetails[7];
+
+
+            model.addRow(
+                    new Object[]{id, CustomerName, Vendor, Date, total, Item, Quantity, Status
+                        });
+        }
+    }
+    
+    
+     private void refreshOrdersStatus() {
+        
+        Order order = new Order();
+        
+        DefaultTableModel model = (DefaultTableModel) OrderStatusTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = order.ViewOrders();
+        String[][] data = records.toArray(new String[0][0]);
+        
+        for (String[] OrderDetails : data) {
+            String id = OrderDetails[0];
+            String CustomerName = OrderDetails[1];
+            String Vendor = OrderDetails[2];
+            String Date = OrderDetails[3];
+            String total = OrderDetails[4];
+            String Status = OrderDetails[5];
+            String Item = OrderDetails[6];
+            String Quantity = OrderDetails[7];
+               
+            model.addRow(
+                    new Object[]{id, CustomerName, Vendor, Date, total, Item, Quantity, Status
                         });
         }
     }
@@ -254,6 +310,27 @@ public class VendorPage extends javax.swing.JFrame {
         user.delUser();
         refreshData(); 
     }
+        
+    private void updateStatus(String status) {
+     
+        int selectedRow = OrderTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for editing!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+            
+        String Id = (String) OrderTable.getValueAt(selectedRow, 0);
+        String CustomerName = (String) OrderTable.getValueAt(selectedRow, 1);
+        String Vendor = (String) OrderTable.getValueAt(selectedRow, 2);
+        String date = (String) OrderTable.getValueAt(selectedRow, 3);
+        String total = (String) OrderTable.getValueAt(selectedRow, 4);
+        String item = (String) OrderTable.getValueAt(selectedRow, 6);
+        String quantity = (String) OrderTable.getValueAt(selectedRow, 7);
+        
+        Order order = new Order(Id, CustomerName, Vendor, date,total, status , item, quantity);
+        order.updateOrderStatus();
+        refreshOrders();
+    } 
 
 
     @SuppressWarnings("unchecked")
@@ -290,11 +367,16 @@ public class VendorPage extends javax.swing.JFrame {
         EditItemBtn = new javax.swing.JButton();
         AddBtn = new javax.swing.JButton();
         OrdersPanel = new javax.swing.JPanel();
-        AddBtn1 = new javax.swing.JButton();
-        DelItemBtn1 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        ItemsTable1 = new javax.swing.JTable();
+        AccBtn = new javax.swing.JButton();
+        DecBtn = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        OrderTable = new javax.swing.JTable();
         OrderStatusPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        OrderStatusTable = new javax.swing.JTable();
+        DoneBtn = new javax.swing.JButton();
+        CancelBtn = new javax.swing.JButton();
+        PreparingBtn = new javax.swing.JButton();
         OrderHistoryPanel = new javax.swing.JPanel();
         CusReviewPanel = new javax.swing.JPanel();
         RevenuePanel = new javax.swing.JPanel();
@@ -649,6 +731,12 @@ public class VendorPage extends javax.swing.JFrame {
         ItemsTable.setShowGrid(true);
         ItemsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(ItemsTable);
+        if (ItemsTable.getColumnModel().getColumnCount() > 0) {
+            ItemsTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+            ItemsTable.getColumnModel().getColumn(1).setHeaderValue("Item Name");
+            ItemsTable.getColumnModel().getColumn(2).setHeaderValue("Item Price");
+            ItemsTable.getColumnModel().getColumn(3).setHeaderValue("Item Type");
+        }
 
         DelItemBtn.setBackground(new java.awt.Color(255, 0, 0));
         DelItemBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -756,60 +844,63 @@ public class VendorPage extends javax.swing.JFrame {
 
         OrdersPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        AddBtn1.setBackground(new java.awt.Color(255, 153, 0));
-        AddBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        AddBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        AddBtn1.setText("Add +");
-        AddBtn1.setBorder(null);
-        AddBtn1.setBorderPainted(false);
-        AddBtn1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        AddBtn1.setFocusPainted(false);
-        AddBtn1.setFocusable(false);
-        AddBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+        AccBtn.setBackground(new java.awt.Color(255, 153, 0));
+        AccBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AccBtn.setForeground(new java.awt.Color(255, 255, 255));
+        AccBtn.setText("Accept");
+        AccBtn.setBorder(null);
+        AccBtn.setBorderPainted(false);
+        AccBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        AccBtn.setFocusPainted(false);
+        AccBtn.setFocusable(false);
+        AccBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                AddBtn1MouseClicked(evt);
+                AccBtnMouseClicked(evt);
             }
         });
 
-        DelItemBtn1.setBackground(new java.awt.Color(255, 0, 0));
-        DelItemBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        DelItemBtn1.setForeground(new java.awt.Color(255, 255, 255));
-        DelItemBtn1.setText("Delete");
-        DelItemBtn1.setBorder(null);
-        DelItemBtn1.setBorderPainted(false);
-        DelItemBtn1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        DelItemBtn1.setFocusPainted(false);
-        DelItemBtn1.setFocusable(false);
-        DelItemBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+        DecBtn.setBackground(new java.awt.Color(255, 0, 0));
+        DecBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DecBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DecBtn.setText("Declined");
+        DecBtn.setBorder(null);
+        DecBtn.setBorderPainted(false);
+        DecBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DecBtn.setFocusPainted(false);
+        DecBtn.setFocusable(false);
+        DecBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                DelItemBtn1MouseClicked(evt);
+                DecBtnMouseClicked(evt);
             }
         });
-        DelItemBtn1.addActionListener(new java.awt.event.ActionListener() {
+        DecBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DelItemBtn1ActionPerformed(evt);
+                DecBtnActionPerformed(evt);
             }
         });
 
-        ItemsTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        ItemsTable1.setModel(new javax.swing.table.DefaultTableModel(
+        OrderTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        OrderTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Item Name", "Item Price", "Item Type"
+                "Order ID", "Customer Name", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
             }
         ));
-        ItemsTable1.setFocusable(false);
-        ItemsTable1.setGridColor(new java.awt.Color(0, 0, 0));
-        ItemsTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        ItemsTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        ItemsTable1.setShowGrid(true);
-        ItemsTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(ItemsTable1);
+        OrderTable.setFocusable(false);
+        OrderTable.setGridColor(new java.awt.Color(0, 0, 0));
+        OrderTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        OrderTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        OrderTable.setShowGrid(true);
+        OrderTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(OrderTable);
 
         javax.swing.GroupLayout OrdersPanelLayout = new javax.swing.GroupLayout(OrdersPanel);
         OrdersPanel.setLayout(OrdersPanelLayout);
@@ -818,11 +909,11 @@ public class VendorPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrdersPanelLayout.createSequentialGroup()
                 .addContainerGap(47, Short.MAX_VALUE)
                 .addGroup(OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(OrdersPanelLayout.createSequentialGroup()
-                        .addComponent(AddBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(AccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(DelItemBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(DecBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(42, 42, 42))
         );
         OrdersPanelLayout.setVerticalGroup(
@@ -830,26 +921,123 @@ public class VendorPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrdersPanelLayout.createSequentialGroup()
                 .addContainerGap(217, Short.MAX_VALUE)
                 .addGroup(OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AddBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DelItemBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(95, 95, 95))
+                    .addComponent(AccBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DecBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(85, 85, 85))
         );
 
         ParentPanel.add(OrdersPanel, "card4");
 
         OrderStatusPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        OrderStatusTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        OrderStatusTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer Name", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
+            }
+        ));
+        OrderStatusTable.setFocusable(false);
+        OrderStatusTable.setGridColor(new java.awt.Color(0, 0, 0));
+        OrderStatusTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        OrderStatusTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        OrderStatusTable.setShowGrid(true);
+        OrderStatusTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(OrderStatusTable);
+
+        DoneBtn.setBackground(new java.awt.Color(255, 153, 0));
+        DoneBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DoneBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DoneBtn.setText("Done");
+        DoneBtn.setBorder(null);
+        DoneBtn.setBorderPainted(false);
+        DoneBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DoneBtn.setFocusPainted(false);
+        DoneBtn.setFocusable(false);
+        DoneBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DoneBtnMouseClicked(evt);
+            }
+        });
+        DoneBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DoneBtnActionPerformed(evt);
+            }
+        });
+
+        CancelBtn.setBackground(new java.awt.Color(255, 0, 0));
+        CancelBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        CancelBtn.setForeground(new java.awt.Color(255, 255, 255));
+        CancelBtn.setText("Cancel ");
+        CancelBtn.setToolTipText("");
+        CancelBtn.setBorder(null);
+        CancelBtn.setBorderPainted(false);
+        CancelBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CancelBtn.setFocusPainted(false);
+        CancelBtn.setFocusable(false);
+        CancelBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CancelBtnMouseClicked(evt);
+            }
+        });
+        CancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelBtnActionPerformed(evt);
+            }
+        });
+
+        PreparingBtn.setBackground(new java.awt.Color(255, 153, 0));
+        PreparingBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        PreparingBtn.setForeground(new java.awt.Color(255, 255, 255));
+        PreparingBtn.setText("Preparing ");
+        PreparingBtn.setBorder(null);
+        PreparingBtn.setBorderPainted(false);
+        PreparingBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        PreparingBtn.setFocusPainted(false);
+        PreparingBtn.setFocusable(false);
+        PreparingBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PreparingBtnMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout OrderStatusPanelLayout = new javax.swing.GroupLayout(OrderStatusPanel);
         OrderStatusPanel.setLayout(OrderStatusPanelLayout);
         OrderStatusPanelLayout.setHorizontalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(OrderStatusPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OrderStatusPanelLayout.createSequentialGroup()
+                        .addComponent(PreparingBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(DoneBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(CancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
         OrderStatusPanelLayout.setVerticalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderStatusPanelLayout.createSequentialGroup()
+                .addContainerGap(228, Short.MAX_VALUE)
+                .addGroup(OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DoneBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(PreparingBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84))
         );
 
         ParentPanel.add(OrderStatusPanel, "card5");
@@ -911,7 +1099,7 @@ public class VendorPage extends javax.swing.JFrame {
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(SidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(ParentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -947,6 +1135,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(OrdersBtn, hoverIcon2);
+        refreshOrders();
     }//GEN-LAST:event_OrdersBtnActionPerformed
 
     private void OrderStatusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrderStatusBtnActionPerformed
@@ -957,6 +1146,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(OrderStatusBtn, hoverIcon3);
+        refreshOrdersStatus();
     }//GEN-LAST:event_OrderStatusBtnActionPerformed
 
     private void OrderHisBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrderHisBtnActionPerformed
@@ -1048,17 +1238,38 @@ public class VendorPage extends javax.swing.JFrame {
        resetFields();
     }//GEN-LAST:event_AddBtnMouseClicked
 
-    private void AddBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddBtn1MouseClicked
+    private void AccBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AccBtnMouseClicked
+        updateStatus("Accepted");
+        
+    }//GEN-LAST:event_AccBtnMouseClicked
+
+    private void DecBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DecBtnMouseClicked
+
+    }//GEN-LAST:event_DecBtnMouseClicked
+
+    private void DecBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DecBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_AddBtn1MouseClicked
+    }//GEN-LAST:event_DecBtnActionPerformed
 
-    private void DelItemBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DelItemBtn1MouseClicked
-
-    }//GEN-LAST:event_DelItemBtn1MouseClicked
-
-    private void DelItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelItemBtn1ActionPerformed
+    private void DoneBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DoneBtnMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_DelItemBtn1ActionPerformed
+    }//GEN-LAST:event_DoneBtnMouseClicked
+
+    private void CancelBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CancelBtnMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CancelBtnMouseClicked
+
+    private void CancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CancelBtnActionPerformed
+
+    private void PreparingBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreparingBtnMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PreparingBtnMouseClicked
+
+    private void DoneBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DoneBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DoneBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1097,14 +1308,16 @@ public class VendorPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AccBtn;
     private javax.swing.JButton AddBtn;
-    private javax.swing.JButton AddBtn1;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
+    private javax.swing.JButton CancelBtn;
     private javax.swing.JButton CusReviewBtn;
     private javax.swing.JPanel CusReviewPanel;
+    private javax.swing.JButton DecBtn;
     private javax.swing.JButton DelItemBtn;
-    private javax.swing.JButton DelItemBtn1;
+    private javax.swing.JButton DoneBtn;
     private javax.swing.JRadioButton DrinkRB;
     private javax.swing.JButton EditItemBtn;
     private javax.swing.JRadioButton FoodRB;
@@ -1113,7 +1326,6 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JLabel ItemTypeLbl;
     private javax.swing.JButton ItemsBtn;
     private javax.swing.JTable ItemsTable;
-    private javax.swing.JTable ItemsTable1;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JPanel ManageMenuItemsPanel;
@@ -1121,10 +1333,13 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JPanel OrderHistoryPanel;
     private javax.swing.JButton OrderStatusBtn;
     private javax.swing.JPanel OrderStatusPanel;
+    private javax.swing.JTable OrderStatusTable;
+    private javax.swing.JTable OrderTable;
     private javax.swing.JButton OrdersBtn;
     private javax.swing.JPanel OrdersPanel;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
+    private javax.swing.JButton PreparingBtn;
     private javax.swing.JButton RevenueBtn;
     private javax.swing.JPanel RevenuePanel;
     private javax.swing.JPanel Separator1;
@@ -1134,6 +1349,7 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     // End of variables declaration//GEN-END:variables
 }

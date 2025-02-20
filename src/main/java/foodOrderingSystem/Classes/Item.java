@@ -148,7 +148,7 @@ public class Item {
     }
     
     
-    public List<String[]> viewAll() {
+    public List<String[]> ViewItems() {
         
         List<String[]> records = new ArrayList<>();
         
