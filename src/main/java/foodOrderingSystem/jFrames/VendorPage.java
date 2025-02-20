@@ -1,16 +1,27 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 public class VendorPage extends javax.swing.JFrame {
 
@@ -45,6 +56,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         initComponents();
         
+        
         WelcomeLbl.setText("Welcome, " + username);
                          
         JButton[] allButtons = {ItemsBtn, OrdersBtn, OrderStatusBtn, OrderHisBtn, CusReviewBtn, RevenueBtn, LogoutBtn};      
@@ -56,6 +68,17 @@ public class VendorPage extends javax.swing.JFrame {
         ButtonStyler.applyMouseEffects(CusReviewBtn, allButtons, defaultIcon5, hoverIcon5);
         ButtonStyler.applyMouseEffects(RevenueBtn, allButtons, defaultIcon6, hoverIcon6);
         ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon7, hoverIcon7);
+        
+        
+        ItemsTable.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                if (!evt.getValueIsAdjusting()) {
+                    populateForm();
+                }
+            }
+        });
+        this.refreshData();
     }
     
     private void resetToDefault() {
@@ -82,6 +105,156 @@ public class VendorPage extends javax.swing.JFrame {
             g2d.fillRect(0, 0, width, height);
         }
     }
+    
+    
+    private void resetFields() {
+        
+        ItemNameTxt.setText("Item Name");
+        ItemNameTxt.setForeground(Color.gray);
+        ItemNameTxt.setFocusable(false);
+        
+        ItemPriceTxt.setText("Item Price");
+        ItemPriceTxt.setForeground(Color.gray);
+        ItemPriceTxt.setFocusable(false);
+    }
+    
+    private void refreshData() {
+        
+        Item item = new Item();
+        
+        DefaultTableModel model = (DefaultTableModel) ItemsTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = item.viewAll();
+        String[][] data = records.toArray(new String[0][0]);
+        
+        for (String[] itemDetails : data) {
+            String id = itemDetails[0];
+            String itemName = itemDetails[1];
+            String itemPrice = itemDetails[2];
+            String itemType = itemDetails[3];          
+            
+            model.addRow(
+                    new Object[]{id, itemName, itemPrice, itemType
+                        });
+        }
+    }
+    
+    private void populateForm() {
+        
+        int selectedRow = ItemsTable.getSelectedRow();
+        if (selectedRow != -1) {
+            String itemName = (String) ItemsTable.getValueAt(selectedRow, 1);
+            String itemPrice = (String) ItemsTable.getValueAt(selectedRow, 2);
+            String itemType = (String) ItemsTable.getValueAt(selectedRow, 3);
+            
+            ItemNameTxt.setForeground(Color.black);
+            ItemNameTxt.setText(itemName);
+            ItemPriceTxt.setForeground(Color.black);
+            ItemPriceTxt.setText(itemPrice);     
+            
+        }
+    }
+    
+    private static Set<String> getExistingIDs() {
+        Set<String> existingIDs = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("Item.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split("--");
+                if (data.length > 0) {
+                    existingIDs.add(data[0]);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+        return existingIDs;
+    }
+    
+    public static String generateID() {
+        
+        Random random = new Random();
+        Set<String> existingIDs = getExistingIDs();
+        
+        StringBuilder ID = new StringBuilder();
+        String newID;
+        
+        do {
+            ID.setLength(0);
+            for (int i = 0; i < 3; i++) {
+                int randomDigit = random.nextInt(10);
+                ID.append(randomDigit);
+            }
+            newID = "I0" + ID.toString();
+        } while (existingIDs.contains(newID));
+        
+        return newID;
+    }    
+    
+    private void addItem() {
+    
+        String itemId = generateID();
+        String itemName = ItemNameTxt.getText();
+        String itemPrice = ItemPriceTxt.getText();
+        String FoodType;
+        
+        if (FoodRB.isSelected()) {
+            
+            FoodType = "Food";
+        }
+        else {
+            FoodType = "Drink";
+        }
+        
+        Item item = new Item(itemId, itemName, itemPrice, FoodType);
+        item.addItem();
+        refreshData();
+    }
+    
+    
+    
+    private void editItem() {
+        
+        String itemName = ItemNameTxt.getText();
+        String itemPrice = ItemPriceTxt.getText();
+        String FoodType;
+            
+        int selectedRow = ItemsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for editing!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (FoodRB.isSelected()) {
+            
+            FoodType = "Food";
+        }
+        else {
+            FoodType = "Drink";
+        }
+            
+        String Id = (String) ItemsTable.getValueAt(selectedRow, 0);
+            
+        Item item = new Item(Id, itemName, itemPrice, FoodType);
+        item.editItem();  
+        refreshData();
+            
+    }
+        private void delItem() {
+        
+        int selectedRow = ItemsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for deleting!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String id = (String) ItemsTable.getValueAt(selectedRow, 0);
+        User user = new User(id);
+        user.delUser();
+        refreshData(); 
+    }
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -104,7 +277,23 @@ public class VendorPage extends javax.swing.JFrame {
         WelcomeLbl = new javax.swing.JLabel();
         PageTypeLbl = new javax.swing.JLabel();
         ManageMenuItemsPanel = new javax.swing.JPanel();
+        ItemNameTxt = new javax.swing.JTextField();
+        Separator1 = new javax.swing.JPanel();
+        Separator2 = new javax.swing.JPanel();
+        ItemPriceTxt = new javax.swing.JTextField();
+        ItemTypeLbl = new javax.swing.JLabel();
+        DrinkRB = new javax.swing.JRadioButton();
+        FoodRB = new javax.swing.JRadioButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ItemsTable = new javax.swing.JTable();
+        DelItemBtn = new javax.swing.JButton();
+        EditItemBtn = new javax.swing.JButton();
+        AddBtn = new javax.swing.JButton();
         OrdersPanel = new javax.swing.JPanel();
+        AddBtn1 = new javax.swing.JButton();
+        DelItemBtn1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ItemsTable1 = new javax.swing.JTable();
         OrderStatusPanel = new javax.swing.JPanel();
         OrderHistoryPanel = new javax.swing.JPanel();
         CusReviewPanel = new javax.swing.JPanel();
@@ -365,30 +554,287 @@ public class VendorPage extends javax.swing.JFrame {
 
         ManageMenuItemsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        ItemNameTxt.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        ItemNameTxt.setForeground(java.awt.Color.gray);
+        ItemNameTxt.setText("Item Name");
+        ItemNameTxt.setBorder(null);
+        ItemNameTxt.setFocusable(false);
+        ItemNameTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ItemNameTxtFocusLost(evt);
+            }
+        });
+        ItemNameTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ItemNameTxtMouseClicked(evt);
+            }
+        });
+
+        Separator1.setBackground(new java.awt.Color(0, 0, 0));
+        Separator1.setMaximumSize(new java.awt.Dimension(300, 1));
+        Separator1.setMinimumSize(new java.awt.Dimension(0, 1));
+
+        javax.swing.GroupLayout Separator1Layout = new javax.swing.GroupLayout(Separator1);
+        Separator1.setLayout(Separator1Layout);
+        Separator1Layout.setHorizontalGroup(
+            Separator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+        Separator1Layout.setVerticalGroup(
+            Separator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        Separator2.setBackground(new java.awt.Color(0, 0, 0));
+        Separator2.setMaximumSize(new java.awt.Dimension(300, 1));
+        Separator2.setMinimumSize(new java.awt.Dimension(0, 1));
+
+        javax.swing.GroupLayout Separator2Layout = new javax.swing.GroupLayout(Separator2);
+        Separator2.setLayout(Separator2Layout);
+        Separator2Layout.setHorizontalGroup(
+            Separator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+        Separator2Layout.setVerticalGroup(
+            Separator2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        ItemPriceTxt.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        ItemPriceTxt.setForeground(java.awt.Color.gray);
+        ItemPriceTxt.setText("Item Price");
+        ItemPriceTxt.setBorder(null);
+        ItemPriceTxt.setFocusable(false);
+        ItemPriceTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                ItemPriceTxtFocusLost(evt);
+            }
+        });
+        ItemPriceTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ItemPriceTxtMouseClicked(evt);
+            }
+        });
+
+        ItemTypeLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        ItemTypeLbl.setText("Item Type");
+
+        DrinkRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        DrinkRB.setText("Drink");
+
+        FoodRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        FoodRB.setText("Food");
+        FoodRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FoodRBActionPerformed(evt);
+            }
+        });
+
+        ItemsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ItemsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "Item Name", "Item Price", "Item Type"
+            }
+        ));
+        ItemsTable.setFocusable(false);
+        ItemsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        ItemsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ItemsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ItemsTable.setShowGrid(true);
+        ItemsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(ItemsTable);
+
+        DelItemBtn.setBackground(new java.awt.Color(255, 0, 0));
+        DelItemBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DelItemBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DelItemBtn.setText("Delete");
+        DelItemBtn.setBorder(null);
+        DelItemBtn.setBorderPainted(false);
+        DelItemBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DelItemBtn.setFocusPainted(false);
+        DelItemBtn.setFocusable(false);
+        DelItemBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DelItemBtnMouseClicked(evt);
+            }
+        });
+
+        EditItemBtn.setBackground(new java.awt.Color(255, 153, 0));
+        EditItemBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        EditItemBtn.setForeground(new java.awt.Color(255, 255, 255));
+        EditItemBtn.setText("Edit");
+        EditItemBtn.setBorder(null);
+        EditItemBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        EditItemBtn.setFocusPainted(false);
+        EditItemBtn.setFocusable(false);
+        EditItemBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EditItemBtnMouseClicked(evt);
+            }
+        });
+
+        AddBtn.setBackground(new java.awt.Color(255, 153, 0));
+        AddBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AddBtn.setForeground(new java.awt.Color(255, 255, 255));
+        AddBtn.setText("Add +");
+        AddBtn.setBorder(null);
+        AddBtn.setBorderPainted(false);
+        AddBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        AddBtn.setFocusPainted(false);
+        AddBtn.setFocusable(false);
+        AddBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AddBtnMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout ManageMenuItemsPanelLayout = new javax.swing.GroupLayout(ManageMenuItemsPanel);
         ManageMenuItemsPanel.setLayout(ManageMenuItemsPanelLayout);
         ManageMenuItemsPanelLayout.setHorizontalGroup(
             ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ItemTypeLbl)
+                            .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(ItemPriceTxt)
+                                .addComponent(Separator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(ItemNameTxt)
+                                .addComponent(Separator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                                .addComponent(FoodRB)
+                                .addGap(18, 18, 18)
+                                .addComponent(DrinkRB))
+                            .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                                .addComponent(AddBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(EditItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(DelItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         ManageMenuItemsPanelLayout.setVerticalGroup(
             ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(ManageMenuItemsPanelLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(ItemNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Separator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(ItemPriceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Separator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(ItemTypeLbl)
+                .addGap(18, 18, 18)
+                .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DrinkRB)
+                    .addComponent(FoodRB))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(ManageMenuItemsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AddBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(EditItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DelItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
         );
 
         ParentPanel.add(ManageMenuItemsPanel, "card3");
 
         OrdersPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        AddBtn1.setBackground(new java.awt.Color(255, 153, 0));
+        AddBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AddBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        AddBtn1.setText("Add +");
+        AddBtn1.setBorder(null);
+        AddBtn1.setBorderPainted(false);
+        AddBtn1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        AddBtn1.setFocusPainted(false);
+        AddBtn1.setFocusable(false);
+        AddBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AddBtn1MouseClicked(evt);
+            }
+        });
+
+        DelItemBtn1.setBackground(new java.awt.Color(255, 0, 0));
+        DelItemBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DelItemBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        DelItemBtn1.setText("Delete");
+        DelItemBtn1.setBorder(null);
+        DelItemBtn1.setBorderPainted(false);
+        DelItemBtn1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DelItemBtn1.setFocusPainted(false);
+        DelItemBtn1.setFocusable(false);
+        DelItemBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DelItemBtn1MouseClicked(evt);
+            }
+        });
+        DelItemBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DelItemBtn1ActionPerformed(evt);
+            }
+        });
+
+        ItemsTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ItemsTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "Item Name", "Item Price", "Item Type"
+            }
+        ));
+        ItemsTable1.setFocusable(false);
+        ItemsTable1.setGridColor(new java.awt.Color(0, 0, 0));
+        ItemsTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ItemsTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ItemsTable1.setShowGrid(true);
+        ItemsTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(ItemsTable1);
+
         javax.swing.GroupLayout OrdersPanelLayout = new javax.swing.GroupLayout(OrdersPanel);
         OrdersPanel.setLayout(OrdersPanelLayout);
         OrdersPanelLayout.setHorizontalGroup(
             OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrdersPanelLayout.createSequentialGroup()
+                .addContainerGap(47, Short.MAX_VALUE)
+                .addGroup(OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OrdersPanelLayout.createSequentialGroup()
+                        .addComponent(AddBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(DelItemBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(42, 42, 42))
         );
         OrdersPanelLayout.setVerticalGroup(
             OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrdersPanelLayout.createSequentialGroup()
+                .addContainerGap(217, Short.MAX_VALUE)
+                .addGroup(OrdersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AddBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DelItemBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(95, 95, 95))
         );
 
         ParentPanel.add(OrdersPanel, "card4");
@@ -465,7 +911,7 @@ public class VendorPage extends javax.swing.JFrame {
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(SidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(ParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -490,6 +936,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(ItemsBtn, hoverIcon1);
+        refreshData();
     }//GEN-LAST:event_ItemsBtnActionPerformed
 
     private void OrdersBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrdersBtnActionPerformed
@@ -546,6 +993,73 @@ public class VendorPage extends javax.swing.JFrame {
         ButtonStyler.applyHoverStyle(RevenueBtn, hoverIcon6);
     }//GEN-LAST:event_RevenueBtnActionPerformed
 
+    private void ItemNameTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ItemNameTxtFocusLost
+        if ("".equals(ItemNameTxt.getText())) {
+            ItemNameTxt.setText("Item Name");
+            ItemNameTxt.setForeground(Color.gray);
+            ItemNameTxt.setFocusable(false);
+        }
+    }//GEN-LAST:event_ItemNameTxtFocusLost
+
+    private void ItemNameTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ItemNameTxtMouseClicked
+        ItemNameTxt.setFocusable(true);
+        ItemNameTxt.requestFocusInWindow();
+        ItemNameTxt.setForeground(Color.black);
+
+        if ("Item Name".equals(ItemNameTxt.getText())) {
+            ItemNameTxt.setText("");
+        }
+    }//GEN-LAST:event_ItemNameTxtMouseClicked
+
+    private void ItemPriceTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ItemPriceTxtFocusLost
+        if ("".equals(ItemPriceTxt.getText())) {
+            ItemPriceTxt.setText("Item Price");
+            ItemPriceTxt.setForeground(Color.gray);
+            ItemPriceTxt.setFocusable(false);
+        }
+    }//GEN-LAST:event_ItemPriceTxtFocusLost
+
+    private void ItemPriceTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ItemPriceTxtMouseClicked
+        ItemPriceTxt.setFocusable(true);
+        ItemPriceTxt.requestFocusInWindow();
+        ItemPriceTxt.setForeground(Color.black);
+
+        if ("Item Price".equals(ItemPriceTxt.getText())) {
+            ItemPriceTxt.setText("");
+        }
+    }//GEN-LAST:event_ItemPriceTxtMouseClicked
+
+    private void FoodRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FoodRBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FoodRBActionPerformed
+
+    private void DelItemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DelItemBtnMouseClicked
+       delItem();
+       resetFields();
+    }//GEN-LAST:event_DelItemBtnMouseClicked
+
+    private void EditItemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EditItemBtnMouseClicked
+       editItem();
+       resetFields();
+    }//GEN-LAST:event_EditItemBtnMouseClicked
+
+    private void AddBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddBtnMouseClicked
+       addItem();
+       resetFields();
+    }//GEN-LAST:event_AddBtnMouseClicked
+
+    private void AddBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddBtn1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddBtn1MouseClicked
+
+    private void DelItemBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DelItemBtn1MouseClicked
+
+    }//GEN-LAST:event_DelItemBtn1MouseClicked
+
+    private void DelItemBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelItemBtn1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DelItemBtn1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -583,11 +1097,23 @@ public class VendorPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddBtn;
+    private javax.swing.JButton AddBtn1;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
     private javax.swing.JButton CusReviewBtn;
     private javax.swing.JPanel CusReviewPanel;
+    private javax.swing.JButton DelItemBtn;
+    private javax.swing.JButton DelItemBtn1;
+    private javax.swing.JRadioButton DrinkRB;
+    private javax.swing.JButton EditItemBtn;
+    private javax.swing.JRadioButton FoodRB;
+    private javax.swing.JTextField ItemNameTxt;
+    private javax.swing.JTextField ItemPriceTxt;
+    private javax.swing.JLabel ItemTypeLbl;
     private javax.swing.JButton ItemsBtn;
+    private javax.swing.JTable ItemsTable;
+    private javax.swing.JTable ItemsTable1;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JPanel ManageMenuItemsPanel;
@@ -601,9 +1127,13 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JButton RevenueBtn;
     private javax.swing.JPanel RevenuePanel;
+    private javax.swing.JPanel Separator1;
+    private javax.swing.JPanel Separator2;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
