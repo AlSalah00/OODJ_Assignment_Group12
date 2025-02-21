@@ -3,6 +3,7 @@ package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
 import foodOrderingSystem.Classes.Order;
+import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
@@ -312,11 +313,59 @@ public class CustomerPage extends javax.swing.JFrame {
         
         AmountLbl.setText(Double.toString(total));
     }
+    
+    
+    private void refreshReviews() {
+        
+        Order order = new Order();
+        
+        DefaultTableModel model = (DefaultTableModel) ReviewsTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = order.ViewOrders();
+        
+        
+        for (String[] orderDetails : records) {
+            if (orderDetails.length >= 5) {
+                String name = orderDetails[1].trim();
+                if (name.equalsIgnoreCase(CustomerName)) {
+                    String id = orderDetails[0];
+                    String vendor = orderDetails[1];
+                    String date = orderDetails[3];          
+            
+                    model.addRow(
+                            new Object[]{id, vendor, date
+                                });
+                }
+            }
+        }
+    }
+    
+    private void submitReview() {
+        
+        int selectedRow = ReviewsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for reviewing!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String comment = VendorCommentTxt.getText();
+        String vendorRating = VendorSpinner.getValue().toString();
+        String deliveryRating = DeliverySpinner.getValue().toString();
+        
+        String Id = (String) ReviewsTable.getValueAt(selectedRow, 0);
+        String vendor = (String) ReviewsTable.getValueAt(selectedRow, 1);
+        String date = (String) ReviewsTable.getValueAt(selectedRow, 2);
+        
+        Review review = new Review(Id, CustomerName, vendor, date, comment, vendorRating, deliveryRating);
+        review.addReview();
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        VendorCommentLbl2 = new javax.swing.JLabel();
         BackgroundPanel = new javax.swing.JPanel();
         SidePanel = new jPanelGradient();
         MenuBtn = new javax.swing.JButton();
@@ -358,12 +407,22 @@ public class CustomerPage extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         TransactionTable = new javax.swing.JTable();
         ReviewsPanel = new javax.swing.JPanel();
-        ReviewsPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        ReviewsTable1 = new javax.swing.JTable();
+        ReviewsTable = new javax.swing.JTable();
+        DeliverySpinner = new javax.swing.JSpinner();
+        VendorCommentTxt = new javax.swing.JTextField();
+        VendorCommentLbl = new javax.swing.JLabel();
+        DeliveryRatingLbl = new javax.swing.JLabel();
+        VendorCommentLbl3 = new javax.swing.JLabel();
+        VendorSpinner = new javax.swing.JSpinner();
+        SubmitBtn = new javax.swing.JButton();
         NotificationPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         NotificationTable2 = new javax.swing.JTable();
+
+        VendorCommentLbl2.setBackground(new java.awt.Color(255, 255, 255));
+        VendorCommentLbl2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        VendorCommentLbl2.setText("Rate Restaurant");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -911,10 +970,8 @@ public class CustomerPage extends javax.swing.JFrame {
 
         ReviewsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        ReviewsPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        ReviewsTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        ReviewsTable1.setModel(new javax.swing.table.DefaultTableModel(
+        ReviewsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ReviewsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -925,53 +982,104 @@ public class CustomerPage extends javax.swing.JFrame {
                 "OrderID", "Vendor", "Date"
             }
         ));
-        ReviewsTable1.setFocusable(false);
-        ReviewsTable1.setGridColor(new java.awt.Color(0, 0, 0));
-        ReviewsTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        ReviewsTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        ReviewsTable1.setShowGrid(true);
-        ReviewsTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane3.setViewportView(ReviewsTable1);
-        if (ReviewsTable1.getColumnModel().getColumnCount() > 0) {
-            ReviewsTable1.getColumnModel().getColumn(0).setHeaderValue("ID");
-        }
+        ReviewsTable.setFocusable(false);
+        ReviewsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        ReviewsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ReviewsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ReviewsTable.setShowGrid(true);
+        ReviewsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(ReviewsTable);
 
-        javax.swing.GroupLayout ReviewsPanel1Layout = new javax.swing.GroupLayout(ReviewsPanel1);
-        ReviewsPanel1.setLayout(ReviewsPanel1Layout);
-        ReviewsPanel1Layout.setHorizontalGroup(
-            ReviewsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ReviewsPanel1Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
-        );
-        ReviewsPanel1Layout.setVerticalGroup(
-            ReviewsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ReviewsPanel1Layout.createSequentialGroup()
-                .addContainerGap(238, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(118, 118, 118))
-        );
+        DeliverySpinner.setModel(new javax.swing.SpinnerNumberModel(1, 0, 5, 1));
+        DeliverySpinner.setFocusable(false);
+
+        VendorCommentTxt.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        VendorCommentTxt.setForeground(java.awt.Color.gray);
+        VendorCommentTxt.setText("Review");
+        VendorCommentTxt.setBorder(null);
+        VendorCommentTxt.setFocusable(false);
+        VendorCommentTxt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                VendorCommentTxtFocusLost(evt);
+            }
+        });
+        VendorCommentTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                VendorCommentTxtMouseClicked(evt);
+            }
+        });
+
+        VendorCommentLbl.setBackground(new java.awt.Color(255, 255, 255));
+        VendorCommentLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        VendorCommentLbl.setText("Stars");
+
+        DeliveryRatingLbl.setBackground(new java.awt.Color(255, 255, 255));
+        DeliveryRatingLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        DeliveryRatingLbl.setText("Rate Delivery Runner");
+
+        VendorCommentLbl3.setBackground(new java.awt.Color(255, 255, 255));
+        VendorCommentLbl3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        VendorCommentLbl3.setText("Rate Restaurant");
+
+        VendorSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 0, 5, 1));
+        VendorSpinner.setFocusable(false);
+
+        SubmitBtn.setBackground(new java.awt.Color(255, 153, 0));
+        SubmitBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        SubmitBtn.setForeground(new java.awt.Color(255, 255, 255));
+        SubmitBtn.setText("Submit");
+        SubmitBtn.setBorder(null);
+        SubmitBtn.setBorderPainted(false);
+        SubmitBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SubmitBtn.setFocusPainted(false);
+        SubmitBtn.setFocusable(false);
+        SubmitBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SubmitBtnMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout ReviewsPanelLayout = new javax.swing.GroupLayout(ReviewsPanel);
         ReviewsPanel.setLayout(ReviewsPanelLayout);
         ReviewsPanelLayout.setHorizontalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 671, Short.MAX_VALUE)
-            .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ReviewsPanelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(ReviewsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                .addGap(65, 65, 65)
+                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DeliveryRatingLbl)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(VendorCommentTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(VendorCommentLbl3))
+                        .addGap(69, 69, 69)
+                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(VendorCommentLbl)
+                            .addComponent(VendorSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(154, Short.MAX_VALUE))
         );
         ReviewsPanelLayout.setVerticalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
-            .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ReviewsPanelLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(ReviewsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(VendorCommentLbl)
+                    .addComponent(VendorCommentLbl3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(VendorCommentTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(VendorSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
+                .addComponent(DeliveryRatingLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50))
         );
 
         ParentPanel.add(ReviewsPanel, "card7");
@@ -987,7 +1095,7 @@ public class CustomerPage extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Message", "Date"
+                "Date", "Massage"
             }
         ));
         NotificationTable2.setFocusable(false);
@@ -997,9 +1105,6 @@ public class CustomerPage extends javax.swing.JFrame {
         NotificationTable2.setShowGrid(true);
         NotificationTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane4.setViewportView(NotificationTable2);
-        if (NotificationTable2.getColumnModel().getColumnCount() > 0) {
-            NotificationTable2.getColumnModel().getColumn(0).setHeaderValue("ID");
-        }
 
         javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
         NotificationPanel.setLayout(NotificationPanelLayout);
@@ -1105,6 +1210,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(ReviewsBtn, hoverIcon5);
+        refreshReviews();
     }//GEN-LAST:event_ReviewsBtnActionPerformed
 
     private void NotificationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NotificationBtnActionPerformed
@@ -1124,6 +1230,28 @@ public class CustomerPage extends javax.swing.JFrame {
     private void AddItemBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddItemBtnMouseClicked
         addToOrder();
     }//GEN-LAST:event_AddItemBtnMouseClicked
+
+    private void SubmitBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SubmitBtnMouseClicked
+        submitReview();
+    }//GEN-LAST:event_SubmitBtnMouseClicked
+
+    private void VendorCommentTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_VendorCommentTxtFocusLost
+        if ("".equals(VendorCommentTxt.getText())) {
+            VendorCommentTxt.setText("Review");
+            VendorCommentTxt.setForeground(Color.gray);
+            VendorCommentTxt.setFocusable(false);
+        }
+    }//GEN-LAST:event_VendorCommentTxtFocusLost
+
+    private void VendorCommentTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VendorCommentTxtMouseClicked
+        VendorCommentTxt.setFocusable(true);
+        VendorCommentTxt.requestFocusInWindow();
+        VendorCommentTxt.setForeground(Color.black);
+
+        if ("Review".equals(VendorCommentTxt.getText())) {
+            VendorCommentTxt.setText("");
+        }
+    }//GEN-LAST:event_VendorCommentTxtMouseClicked
 
     /**
      * @param args the command line arguments
@@ -1167,6 +1295,8 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
     private javax.swing.JLabel CurrencyLbl;
+    private javax.swing.JLabel DeliveryRatingLbl;
+    private javax.swing.JSpinner DeliverySpinner;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton MenuBtn;
@@ -1191,14 +1321,19 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JLabel RestaurantsLbl;
     private javax.swing.JButton ReviewsBtn;
     private javax.swing.JPanel ReviewsPanel;
-    private javax.swing.JPanel ReviewsPanel1;
-    private javax.swing.JTable ReviewsTable1;
+    private javax.swing.JTable ReviewsTable;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
+    private javax.swing.JButton SubmitBtn;
     private javax.swing.JLabel TotalLbl;
     private javax.swing.JButton TransactionHisBtn;
     private javax.swing.JPanel TransactionHisPanel;
     private javax.swing.JTable TransactionTable;
+    private javax.swing.JLabel VendorCommentLbl;
+    private javax.swing.JLabel VendorCommentLbl2;
+    private javax.swing.JLabel VendorCommentLbl3;
+    private javax.swing.JTextField VendorCommentTxt;
+    private javax.swing.JSpinner VendorSpinner;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JPanel jPanel2;
