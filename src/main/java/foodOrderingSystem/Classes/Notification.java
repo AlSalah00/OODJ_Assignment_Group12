@@ -1,21 +1,29 @@
 
 package foodOrderingSystem.Classes;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
-public class Notification {  // Correct class name
+public class Notification {
     
     private String username;
     private String message;
-    private String date;  // Change Date → date to avoid conflicts
+    private String date;
 
     public Notification(String username, String message, String date) { 
         this.username = username;  
         this.message = message;
-        this.date = date;  // Ensure consistency
+        this.date = date;
+    }
+    
+    public Notification() {
+        
     }
     
     public void setUsername(String username) {
@@ -44,12 +52,30 @@ public class Notification {  // Correct class name
     
     public void sendNotification() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Notification.txt", true))) {
-            writer.write(username + "--" + message + "--" + date);  // Ensure date is treated as a String
+            writer.write(username + "--" + message + "--" + date);
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Notification sent successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not send notification.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    public List<String[]> ViewNotifications() {
+        
+        List<String[]> records = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader("Notification.txt"))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                records.add(data);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+
+        return records;
+    }    
 }
 

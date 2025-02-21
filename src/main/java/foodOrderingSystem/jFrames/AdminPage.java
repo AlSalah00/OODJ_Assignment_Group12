@@ -1,6 +1,9 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Notification;
+import foodOrderingSystem.Classes.Order;
+import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
@@ -38,8 +41,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 public class AdminPage extends javax.swing.JFrame {
-
-    LoginPage login = new LoginPage();
     
     Color orange = new Color(255, 153, 0, 255);    
        
@@ -50,13 +51,10 @@ public class AdminPage extends javax.swing.JFrame {
     Icon hoverIcon2 = new ImageIcon(ButtonStyler.class.getResource("/top-upHover.png"));
     
     Icon defaultIcon3 = new ImageIcon(ButtonStyler.class.getResource("/transaction.png"));
-    Icon hoverIcon3 = new ImageIcon(ButtonStyler.class.getResource("/transactionHover.png"));
+    Icon hoverIcon3 = new ImageIcon(ButtonStyler.class.getResource("/transactionHover.png"));    
     
-    Icon defaultIcon4 = new ImageIcon(ButtonStyler.class.getResource("/bill.png"));
-    Icon hoverIcon4 = new ImageIcon(ButtonStyler.class.getResource("/billHover.png"));
-    
-    Icon defaultIcon5 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
-    Icon hoverIcon5 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
+    Icon defaultIcon4 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
+    Icon hoverIcon4 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
     
     public AdminPage(String username) {
        
@@ -69,6 +67,7 @@ public class AdminPage extends javax.swing.JFrame {
         WelcomeLbl.setText("Welcome, " + username);
         TableHeaderStyle(UsersTable);
         TableHeaderStyle(UsersTable_TopUp);
+        TableHeaderStyle(TransactionsTable);
         
         UsersTable.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             @Override
@@ -79,15 +78,13 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
         this.refreshData(PasswordsChkBox.isSelected());
-        this.refreshBalance();
         
-        JButton[] allButtons = {UserRegBtn, TopUpBtn, TransactionBtn, ReceiptsBtn, LogoutBtn};      
+        JButton[] allButtons = {UserRegBtn, TopUpBtn, TransactionBtn, LogoutBtn};      
         
         ButtonStyler.applyMouseEffects(UserRegBtn, allButtons, defaultIcon1, hoverIcon1);
         ButtonStyler.applyMouseEffects(TopUpBtn, allButtons, defaultIcon2, hoverIcon2);
         ButtonStyler.applyMouseEffects(TransactionBtn, allButtons, defaultIcon3, hoverIcon3);
-        ButtonStyler.applyMouseEffects(ReceiptsBtn, allButtons, defaultIcon4, hoverIcon4);
-        ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon5, hoverIcon5);
+        ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon4, hoverIcon4);
     }
     
     // A method to reset the menu buttons style
@@ -95,8 +92,7 @@ public class AdminPage extends javax.swing.JFrame {
         ButtonStyler.applyDefaultStyle(UserRegBtn, defaultIcon1);
         ButtonStyler.applyDefaultStyle(TopUpBtn, defaultIcon2);
         ButtonStyler.applyDefaultStyle(TransactionBtn, defaultIcon3);
-        ButtonStyler.applyDefaultStyle(ReceiptsBtn, defaultIcon4);
-        ButtonStyler.applyDefaultStyle(LogoutBtn, defaultIcon5);
+        ButtonStyler.applyDefaultStyle(LogoutBtn, defaultIcon4);
     }
 
     // Customizing the side panel (menu) appearance
@@ -386,6 +382,54 @@ public class AdminPage extends javax.swing.JFrame {
         }
         
     }
+    
+    private void refreshTransactions() {
+        
+        Order order = new Order();
+             
+        DefaultTableModel model = (DefaultTableModel) TransactionsTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = order.ViewOrders();
+        
+        for (String[] orderDetails : records) {
+      
+                    String orderID = orderDetails[0];
+                    String customer = orderDetails[1];
+                    String vendor= orderDetails[2];
+                    String date = orderDetails[5];
+                    String total = orderDetails[6];
+                             
+                    model.addRow(
+                            new Object[]{orderID, vendor, customer, date, total
+                                });                     
+        }
+    }
+    
+    private void generateTransactionReceipt() {
+        
+        int selectedRow = TransactionsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for updating!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+            
+        String orderID = (String) TransactionsTable.getValueAt(selectedRow, 0);
+        String vendor = (String) TransactionsTable.getValueAt(selectedRow, 1);
+        String customer = (String) TransactionsTable.getValueAt(selectedRow, 2);
+        String date = (String) TransactionsTable.getValueAt(selectedRow, 3);
+        String total = (String) TransactionsTable.getValueAt(selectedRow, 4);
+        
+        Order order = new Order(orderID, vendor, customer, date, total);
+        order.generateTransactionReceipt();
+        
+        String message = "Transaction Receipt: " + orderID + " | " + vendor + " | " + customer + " | " + 
+                date + " | " + total;
+        
+        Notification nt = new Notification(customer, message, java.time.LocalDate.now().toString());
+        nt.sendNotification();
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -396,7 +440,6 @@ public class AdminPage extends javax.swing.JFrame {
         UserRegBtn = new javax.swing.JButton();
         TopUpBtn = new javax.swing.JButton();
         TransactionBtn = new javax.swing.JButton();
-        ReceiptsBtn = new javax.swing.JButton();
         SeparatorPanel = new javax.swing.JPanel();
         LogoLbl = new javax.swing.JLabel();
         LogoutBtn = new javax.swing.JButton();
@@ -434,6 +477,9 @@ public class AdminPage extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         SearchTxt_TopUp = new javax.swing.JTextField();
         TransactionsPanel = new javax.swing.JPanel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        TransactionsTable = new javax.swing.JTable();
+        GenerateRctBtn = new javax.swing.JButton();
         ReceiptsPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -503,27 +549,6 @@ public class AdminPage extends javax.swing.JFrame {
             }
         });
 
-        ReceiptsBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        ReceiptsBtn.setForeground(new java.awt.Color(255, 255, 255));
-        ReceiptsBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bill.png"))); // NOI18N
-        ReceiptsBtn.setText("Receipts");
-        ReceiptsBtn.setToolTipText("");
-        ReceiptsBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
-        ReceiptsBtn.setBorderPainted(false);
-        ReceiptsBtn.setContentAreaFilled(false);
-        ReceiptsBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ReceiptsBtn.setFocusPainted(false);
-        ReceiptsBtn.setFocusable(false);
-        ReceiptsBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        ReceiptsBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        ReceiptsBtn.setIconTextGap(10);
-        ReceiptsBtn.setMargin(new java.awt.Insets(5, 15, 5, 10));
-        ReceiptsBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ReceiptsBtnActionPerformed(evt);
-            }
-        });
-
         SeparatorPanel.setBackground(new java.awt.Color(255, 255, 255));
         SeparatorPanel.setPreferredSize(new java.awt.Dimension(256, 3));
 
@@ -566,18 +591,17 @@ public class AdminPage extends javax.swing.JFrame {
         SidePanelLayout.setHorizontalGroup(
             SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(UserRegBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ReceiptsBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(TransactionBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(TopUpBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(LogoutBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(SidePanelLayout.createSequentialGroup()
                 .addGroup(SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SidePanelLayout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(SeparatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(SidePanelLayout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addComponent(LogoLbl)))
+                        .addComponent(LogoLbl))
+                    .addGroup(SidePanelLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(SeparatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         SidePanelLayout.setVerticalGroup(
@@ -592,8 +616,6 @@ public class AdminPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(TransactionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ReceiptsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(SeparatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(LogoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -627,7 +649,7 @@ public class AdminPage extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(PageTypeLbl))
                     .addComponent(WelcomeLbl))
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addContainerGap(314, Short.MAX_VALUE))
         );
         WelcomePanelLayout.setVerticalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -921,7 +943,7 @@ public class AdminPage extends javax.swing.JFrame {
                                     .addComponent(PasswordsChkBox))
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 56, Short.MAX_VALUE))))
+                        .addGap(0, 73, Short.MAX_VALUE))))
         );
         UserRegPanelLayout.setVerticalGroup(
             UserRegPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1082,33 +1104,30 @@ public class AdminPage extends javax.swing.JFrame {
             .addGroup(TopUpPanelLayout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SearchTxt_TopUp)
-                    .addGroup(TopUpPanelLayout.createSequentialGroup()
-                        .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ConfirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(AmountTxt)
-                                .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 58, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(SearchTxt_TopUp, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ConfirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(AmountTxt)
+                        .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
         TopUpPanelLayout.setVerticalGroup(
             TopUpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopUpPanelLayout.createSequentialGroup()
-                .addContainerGap(177, Short.MAX_VALUE)
+                .addGap(95, 95, 95)
                 .addComponent(AmountTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
+                .addGap(27, 27, 27)
                 .addComponent(ConfirmBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
+                .addGap(48, 48, 48)
                 .addComponent(SearchTxt_TopUp, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                .addGap(1, 1, 1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34))
         );
 
@@ -1116,15 +1135,64 @@ public class AdminPage extends javax.swing.JFrame {
 
         TransactionsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        TransactionsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TransactionsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "OrderID", "Vendor", "Customer", "Date", "Total"
+            }
+        ));
+        TransactionsTable.setFocusable(false);
+        TransactionsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TransactionsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TransactionsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TransactionsTable.setShowGrid(true);
+        TransactionsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane9.setViewportView(TransactionsTable);
+
+        GenerateRctBtn.setBackground(new java.awt.Color(255, 153, 0));
+        GenerateRctBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        GenerateRctBtn.setForeground(new java.awt.Color(255, 255, 255));
+        GenerateRctBtn.setText("Generate Receipt");
+        GenerateRctBtn.setBorder(null);
+        GenerateRctBtn.setBorderPainted(false);
+        GenerateRctBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        GenerateRctBtn.setFocusPainted(false);
+        GenerateRctBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GenerateRctBtnMouseClicked(evt);
+            }
+        });
+        GenerateRctBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GenerateRctBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout TransactionsPanelLayout = new javax.swing.GroupLayout(TransactionsPanel);
         TransactionsPanel.setLayout(TransactionsPanelLayout);
         TransactionsPanelLayout.setHorizontalGroup(
             TransactionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 654, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TransactionsPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addGroup(TransactionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(GenerateRctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(58, 58, 58))
         );
         TransactionsPanelLayout.setVerticalGroup(
             TransactionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
+            .addGroup(TransactionsPanelLayout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(GenerateRctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         ParentPanel.add(TransactionsPanel, "card5");
@@ -1135,7 +1203,7 @@ public class AdminPage extends javax.swing.JFrame {
         ReceiptsPanel.setLayout(ReceiptsPanelLayout);
         ReceiptsPanelLayout.setHorizontalGroup(
             ReceiptsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 654, Short.MAX_VALUE)
+            .addGap(0, 671, Short.MAX_VALUE)
         );
         ReceiptsPanelLayout.setVerticalGroup(
             ReceiptsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1191,6 +1259,7 @@ public class AdminPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TopUpBtn, hoverIcon2);
+        refreshBalance();
     }//GEN-LAST:event_TopUpBtnActionPerformed
 
     private void TransactionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TransactionBtnActionPerformed
@@ -1201,17 +1270,8 @@ public class AdminPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TransactionBtn, hoverIcon3);
+        refreshTransactions();
     }//GEN-LAST:event_TransactionBtnActionPerformed
-
-    private void ReceiptsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReceiptsBtnActionPerformed
-        ParentPanel.removeAll();
-        ParentPanel.add(ReceiptsPanel);
-        ParentPanel.repaint();
-        ParentPanel.revalidate();
-        
-        resetToDefault();
-        ButtonStyler.applyHoverStyle(ReceiptsBtn, hoverIcon4);
-    }//GEN-LAST:event_ReceiptsBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
         this.dispose();
@@ -1449,6 +1509,14 @@ public class AdminPage extends javax.swing.JFrame {
    
     }//GEN-LAST:event_ConfirmBtnActionPerformed
 
+    private void GenerateRctBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GenerateRctBtnMouseClicked
+        generateTransactionReceipt();
+    }//GEN-LAST:event_GenerateRctBtnMouseClicked
+
+    private void GenerateRctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerateRctBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_GenerateRctBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1494,6 +1562,7 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JButton EditBtn;
     private javax.swing.JLabel EmailExampleLbl;
     private javax.swing.JTextField EmailTxt;
+    private javax.swing.JButton GenerateRctBtn;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JLabel PageTypeLbl;
@@ -1501,7 +1570,6 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JCheckBox PasswordsChkBox;
     private javax.swing.JLabel PhoneNoExampleLbl;
     private javax.swing.JTextField PhoneNoTxt;
-    private javax.swing.JButton ReceiptsBtn;
     private javax.swing.JPanel ReceiptsPanel;
     private javax.swing.JComboBox<String> RoleComboBox;
     private javax.swing.JLabel RoleLbl;
@@ -1517,6 +1585,7 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JPanel TopUpPanel;
     private javax.swing.JButton TransactionBtn;
     private javax.swing.JPanel TransactionsPanel;
+    private javax.swing.JTable TransactionsTable;
     private javax.swing.JButton UserRegBtn;
     private javax.swing.JPanel UserRegPanel;
     private javax.swing.JLabel UsernameExampleLbl;
@@ -1529,5 +1598,6 @@ public class AdminPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane9;
     // End of variables declaration//GEN-END:variables
 }

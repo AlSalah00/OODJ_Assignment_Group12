@@ -2,26 +2,33 @@
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.Notification;
 import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.List;
-import javax.management.Notification;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class ManagerPage extends javax.swing.JFrame {
 
-    
+    Color orange = new Color(255, 153, 0, 255);  
     
     Icon defaultIcon1 = new ImageIcon(ButtonStyler.class.getResource("/profit.png"));
     Icon hoverIcon1 = new ImageIcon(ButtonStyler.class.getResource("/profitHover.png"));
@@ -46,7 +53,11 @@ public class ManagerPage extends javax.swing.JFrame {
         
         initComponents();
         
-        WelcomeLbl.setText("Welcome, " + username);               
+        WelcomeLbl.setText("Welcome, " + username);   
+        TableHeaderStyle(RevenueTable);
+        TableHeaderStyle(RatingsTable);
+        TableHeaderStyle(ComplaintsTable);
+        TableHeaderStyle(ItemsTableM);
         
         JButton[] allButtons = {VendorPerfBtn, DRPerfBtn, CusComplaintsBtn, RmvItemBtn, LogoutBtn};      
         
@@ -56,6 +67,24 @@ public class ManagerPage extends javax.swing.JFrame {
         ButtonStyler.applyMouseEffects(RmvItemBtn, allButtons, defaultIcon4, hoverIcon4);
         ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon5, hoverIcon5);
     }
+    
+    private void TableHeaderStyle(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+            label.setBackground(orange);
+            label.setForeground(Color.white);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            return label;
+        }
+        });
+    }   
     
     private void resetToDefault() {
         ButtonStyler.applyDefaultStyle(VendorPerfBtn, defaultIcon1);
@@ -131,7 +160,7 @@ public class ManagerPage extends javax.swing.JFrame {
         
         Review review = new Review();
              
-        DefaultTableModel model = (DefaultTableModel) ComplaintsTBL.getModel();
+        DefaultTableModel model = (DefaultTableModel) ComplaintsTable.getModel();
         model.setRowCount(0);
         
         
@@ -151,7 +180,7 @@ public class ManagerPage extends javax.swing.JFrame {
                    
             
                     model.addRow(
-                            new Object[]{id, customer, vendor,DeliveryRunner, comment,
+                            new Object[]{id, customer, vendor,DeliveryRunner, comment
                                 });
                 }
             }
@@ -160,16 +189,18 @@ public class ManagerPage extends javax.swing.JFrame {
     
     private void sendReply() {
         
-        int selectedRow = ComplaintsTBL.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(null, "No record selected for updating!", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+        int selectedRow = ComplaintsTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for updating!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     
-    String CustomerName = (String) ComplaintsTBL.getValueAt(selectedRow, 1);
-    String reply = ReplyTxt.getText();
-    String date = java.time.LocalDate.now().toString();  // Ensure date is a String
+        String CustomerName = (String) ComplaintsTable.getValueAt(selectedRow, 1);
+        String reply = ReplyTxt.getText();
+        String date = java.time.LocalDate.now().toString();
         
+        Notification nt = new Notification(CustomerName, "Manager reply: " + reply, date);
+        nt.sendNotification();       
     }
     
     private void refreshRevenues() {
@@ -253,7 +284,7 @@ public class ManagerPage extends javax.swing.JFrame {
         RatingsTable = new javax.swing.JTable();
         CusComplaintsPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        ComplaintsTBL = new javax.swing.JTable();
+        ComplaintsTable = new javax.swing.JTable();
         ReplyTxt = new javax.swing.JTextField();
         Separator4 = new javax.swing.JPanel();
         SendBtn = new javax.swing.JButton();
@@ -262,6 +293,7 @@ public class ManagerPage extends javax.swing.JFrame {
         Removebtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ItemsTableM = new javax.swing.JTable();
+        RestaurantsLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -494,17 +526,17 @@ public class ManagerPage extends javax.swing.JFrame {
         VendorPerfPanel.setLayout(VendorPerfPanelLayout);
         VendorPerfPanelLayout.setHorizontalGroup(
             VendorPerfPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(VendorPerfPanelLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VendorPerfPanelLayout.createSequentialGroup()
+                .addContainerGap(61, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addGap(48, 48, 48))
         );
         VendorPerfPanelLayout.setVerticalGroup(
             VendorPerfPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VendorPerfPanelLayout.createSequentialGroup()
-                .addContainerGap(166, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
+                .addContainerGap(60, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40))
         );
 
         ParentPanel.add(VendorPerfPanel, "card3");
@@ -535,25 +567,25 @@ public class ManagerPage extends javax.swing.JFrame {
         DRPerfPanel.setLayout(DRPerfPanelLayout);
         DRPerfPanelLayout.setHorizontalGroup(
             DRPerfPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DRPerfPanelLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DRPerfPanelLayout.createSequentialGroup()
+                .addContainerGap(71, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48))
         );
         DRPerfPanelLayout.setVerticalGroup(
             DRPerfPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DRPerfPanelLayout.createSequentialGroup()
-                .addContainerGap(166, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
+                .addContainerGap(59, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41))
         );
 
         ParentPanel.add(DRPerfPanel, "card4");
 
         CusComplaintsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        ComplaintsTBL.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        ComplaintsTBL.setModel(new javax.swing.table.DefaultTableModel(
+        ComplaintsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ComplaintsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -564,13 +596,13 @@ public class ManagerPage extends javax.swing.JFrame {
                 "Order ID", "Customer Name", "Vendor", "Delivery Runner", "Comment"
             }
         ));
-        ComplaintsTBL.setFocusable(false);
-        ComplaintsTBL.setGridColor(new java.awt.Color(0, 0, 0));
-        ComplaintsTBL.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        ComplaintsTBL.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        ComplaintsTBL.setShowGrid(true);
-        ComplaintsTBL.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(ComplaintsTBL);
+        ComplaintsTable.setFocusable(false);
+        ComplaintsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        ComplaintsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ComplaintsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ComplaintsTable.setShowGrid(true);
+        ComplaintsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(ComplaintsTable);
 
         ReplyTxt.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         ReplyTxt.setForeground(java.awt.Color.gray);
@@ -601,7 +633,7 @@ public class ManagerPage extends javax.swing.JFrame {
         Separator4.setLayout(Separator4Layout);
         Separator4Layout.setHorizontalGroup(
             Separator4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 232, Short.MAX_VALUE)
         );
         Separator4Layout.setVerticalGroup(
             Separator4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -630,16 +662,11 @@ public class ManagerPage extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CusComplaintsPanelLayout.createSequentialGroup()
                 .addContainerGap(46, Short.MAX_VALUE)
                 .addGroup(CusComplaintsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(SendBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(CusComplaintsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(CusComplaintsPanelLayout.createSequentialGroup()
-                            .addComponent(Separator4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addContainerGap())
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CusComplaintsPanelLayout.createSequentialGroup()
-                            .addGroup(CusComplaintsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(ReplyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(43, 43, 43)))))
+                    .addComponent(ReplyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43))
         );
         CusComplaintsPanelLayout.setVerticalGroup(
             CusComplaintsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -650,9 +677,9 @@ public class ManagerPage extends javax.swing.JFrame {
                 .addComponent(Separator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(43, 43, 43)
                 .addComponent(SendBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63))
+                .addGap(57, 57, 57))
         );
 
         ParentPanel.add(CusComplaintsPanel, "card5");
@@ -710,6 +737,9 @@ public class ManagerPage extends javax.swing.JFrame {
         ItemsTableM.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(ItemsTableM);
 
+        RestaurantsLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        RestaurantsLbl.setText("Vendors");
+
         javax.swing.GroupLayout RmvItemPanelLayout = new javax.swing.GroupLayout(RmvItemPanel);
         RmvItemPanel.setLayout(RmvItemPanelLayout);
         RmvItemPanelLayout.setHorizontalGroup(
@@ -717,6 +747,7 @@ public class ManagerPage extends javax.swing.JFrame {
             .addGroup(RmvItemPanelLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(RmvItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(RestaurantsLbl)
                     .addComponent(VendorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Removebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -725,12 +756,14 @@ public class ManagerPage extends javax.swing.JFrame {
         RmvItemPanelLayout.setVerticalGroup(
             RmvItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RmvItemPanelLayout.createSequentialGroup()
-                .addGap(117, 117, 117)
+                .addGap(80, 80, 80)
+                .addComponent(RestaurantsLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(VendorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                .addGap(47, 47, 47)
                 .addComponent(Removebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
                 .addGap(36, 36, 36))
         );
 
@@ -813,16 +846,17 @@ public class ManagerPage extends javax.swing.JFrame {
     }//GEN-LAST:event_RmvItemBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
-        // TODO add your handling code here:
+        LoginPage lp = new LoginPage();
+        this.dispose();
+        lp.setVisible(true);
     }//GEN-LAST:event_LogoutBtnActionPerformed
 
     private void RemovebtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RemovebtnMouseClicked
-        //delItem();
-        //resetFields();
+
     }//GEN-LAST:event_RemovebtnMouseClicked
 
     private void RemovebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemovebtnActionPerformed
-        // TODO add your handling code here:
+
         delItem();
     }//GEN-LAST:event_RemovebtnActionPerformed
 
@@ -832,7 +866,7 @@ public class ManagerPage extends javax.swing.JFrame {
 
     private void ReplyTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ReplyTxtFocusLost
         if ("".equals(ReplyTxt.getText())) {
-            ReplyTxt.setText("Review");
+            ReplyTxt.setText("Reply");
             ReplyTxt.setForeground(Color.gray);
             ReplyTxt.setFocusable(false);
         }
@@ -843,7 +877,7 @@ public class ManagerPage extends javax.swing.JFrame {
         ReplyTxt.requestFocusInWindow();
         ReplyTxt.setForeground(Color.black);
 
-        if ("Review".equals(ReplyTxt.getText())) {
+        if ("Reply".equals(ReplyTxt.getText())) {
             ReplyTxt.setText("");
         }
     }//GEN-LAST:event_ReplyTxtMouseClicked
@@ -853,7 +887,7 @@ public class ManagerPage extends javax.swing.JFrame {
     }//GEN-LAST:event_ReplyTxtActionPerformed
 
     private void SendBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SendBtnMouseClicked
-        
+            sendReply();
     }//GEN-LAST:event_SendBtnMouseClicked
 
     /**
@@ -895,7 +929,7 @@ public class ManagerPage extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
-    private javax.swing.JTable ComplaintsTBL;
+    private javax.swing.JTable ComplaintsTable;
     private javax.swing.JButton CusComplaintsBtn;
     private javax.swing.JPanel CusComplaintsPanel;
     private javax.swing.JButton DRPerfBtn;
@@ -908,13 +942,11 @@ public class ManagerPage extends javax.swing.JFrame {
     private javax.swing.JTable RatingsTable;
     private javax.swing.JButton Removebtn;
     private javax.swing.JTextField ReplyTxt;
+    private javax.swing.JLabel RestaurantsLbl;
     private javax.swing.JTable RevenueTable;
     private javax.swing.JButton RmvItemBtn;
     private javax.swing.JPanel RmvItemPanel;
     private javax.swing.JButton SendBtn;
-    private javax.swing.JPanel Separator1;
-    private javax.swing.JPanel Separator2;
-    private javax.swing.JPanel Separator3;
     private javax.swing.JPanel Separator4;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;

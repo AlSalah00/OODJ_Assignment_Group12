@@ -12,6 +12,9 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -71,6 +74,8 @@ public class VendorPage extends javax.swing.JFrame {
         TableHeaderStyle(ItemsTable);
         TableHeaderStyle(OrderTable);
         TableHeaderStyle(OrderStatusTable);
+        TableHeaderStyle(OrderHistoryTable);
+        TableHeaderStyle(ReviewsTable);
         
         String name = WelcomeLbl.getText();
         String[] parts = name.split(", ");
@@ -188,6 +193,7 @@ public class VendorPage extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         Set<String> validStatuses = Set.of("Accepted", "Preparing");
+        Set<String> validHisStatuses = Set.of("Done", "Cancelled");
 
         
         List<String[]> records = order.ViewOrders();
@@ -200,15 +206,16 @@ public class VendorPage extends javax.swing.JFrame {
             if (name.equalsIgnoreCase(Vendor) && table == OrderTable && 
                     status.equalsIgnoreCase("Pending") || 
                     name.equalsIgnoreCase(Vendor) && table == OrderStatusTable && 
-                    validStatuses.contains(status)) {
+                    validStatuses.contains(status) || name.equalsIgnoreCase(Vendor) &&
+                    table == OrderHistoryTable && validHisStatuses.contains(status)) {
                 model.addRow(new Object[]{
                     OrderDetails[0], // ID
                     OrderDetails[1], // Customer Name
                     OrderDetails[2], // Vendor
-                    OrderDetails[3], // Date
-                    OrderDetails[4], // Total
-                    OrderDetails[5], // Item
-                    OrderDetails[6], // Quantity
+                    OrderDetails[3], // Item
+                    OrderDetails[4], // Quantity
+                    OrderDetails[5], // Total
+                    OrderDetails[6], // Date
                     OrderDetails[7]  // Status
                 });
             }
@@ -295,7 +302,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         String itemName = ItemNameTxt.getText();
         String itemPrice = ItemPriceTxt.getText();
-        String FoodType;
+        String FoodType = "";
             
         int selectedRow = ItemsTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -306,9 +313,11 @@ public class VendorPage extends javax.swing.JFrame {
         if (FoodRB.isSelected()) {
             
             FoodType = "Food";
+            DrinkRB.setSelected(false);
         }
-        else {
+        if (DrinkRB.isSelected()) {
             FoodType = "Drink";
+            FoodRB.setSelected(false);
         }
             
         String Id = (String) ItemsTable.getValueAt(selectedRow, 0);
@@ -347,7 +356,7 @@ public class VendorPage extends javax.swing.JFrame {
         String item = (String) table.getValueAt(selectedRow, 5);
         String quantity = (String) table.getValueAt(selectedRow, 6);
         
-        Order order = new Order(Id, CustomerName, Vendor, date, total, item , quantity, status);
+        Order order = new Order(Id, CustomerName, Vendor, item, quantity, date , total, status);
         order.updateOrderStatus();
         refreshOrders(table);
     } 
@@ -386,8 +395,19 @@ public class VendorPage extends javax.swing.JFrame {
     
     private void displayRevenue() {
         
-        Order order = new Order();
-        order.displayRevenue(RevenueLbl);
+        User user = new User();
+        
+        List<String[]> records = user.viewRevenues();
+        
+        for (String[] reviewDetails : records) {
+            if (reviewDetails.length >= 3) {
+                String name = reviewDetails[0].trim();
+                if (name.equalsIgnoreCase(Vendor)) {
+                    String revenue = reviewDetails[2];
+                    RevenueLbl.setText("RM " + revenue);
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -435,11 +455,15 @@ public class VendorPage extends javax.swing.JFrame {
         CancelBtn2 = new javax.swing.JButton();
         PreparingBtn = new javax.swing.JButton();
         OrderHistoryPanel = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        OrderHistoryTable = new javax.swing.JTable();
         CusReviewPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         ReviewsTable = new javax.swing.JTable();
         RevenuePanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         RevenueLbl = new javax.swing.JLabel();
+        RevenueLbl1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -765,11 +789,22 @@ public class VendorPage extends javax.swing.JFrame {
         DrinkRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         DrinkRB.setText("Drink");
         DrinkRB.setFocusable(false);
+        DrinkRB.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                DrinkRBStateChanged(evt);
+            }
+        });
 
         FoodRB.setBackground(new java.awt.Color(255, 255, 255));
         FoodRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        FoodRB.setSelected(true);
         FoodRB.setText("Food");
         FoodRB.setFocusable(false);
+        FoodRB.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                FoodRBStateChanged(evt);
+            }
+        });
         FoodRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FoodRBActionPerformed(evt);
@@ -949,7 +984,7 @@ public class VendorPage extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Order ID", "Customer", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
             }
         ));
         OrderTable.setFocusable(false);
@@ -1002,7 +1037,7 @@ public class VendorPage extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Order ID", "Customer", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
             }
         ));
         OrderStatusTable.setFocusable(false);
@@ -1012,12 +1047,6 @@ public class VendorPage extends javax.swing.JFrame {
         OrderStatusTable.setShowGrid(true);
         OrderStatusTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(OrderStatusTable);
-        if (OrderStatusTable.getColumnModel().getColumnCount() > 0) {
-            OrderStatusTable.getColumnModel().getColumn(2).setHeaderValue("Vendor");
-            OrderStatusTable.getColumnModel().getColumn(5).setHeaderValue("Item");
-            OrderStatusTable.getColumnModel().getColumn(6).setHeaderValue("Quantity");
-            OrderStatusTable.getColumnModel().getColumn(7).setHeaderValue("Status");
-        }
 
         DoneBtn.setBackground(new java.awt.Color(255, 153, 0));
         DoneBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -1113,15 +1142,44 @@ public class VendorPage extends javax.swing.JFrame {
 
         OrderHistoryPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        OrderHistoryTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        OrderHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
+            }
+        ));
+        OrderHistoryTable.setFocusable(false);
+        OrderHistoryTable.setGridColor(new java.awt.Color(0, 0, 0));
+        OrderHistoryTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        OrderHistoryTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        OrderHistoryTable.setShowGrid(true);
+        OrderHistoryTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane6.setViewportView(OrderHistoryTable);
+
         javax.swing.GroupLayout OrderHistoryPanelLayout = new javax.swing.GroupLayout(OrderHistoryPanel);
         OrderHistoryPanel.setLayout(OrderHistoryPanelLayout);
         OrderHistoryPanelLayout.setHorizontalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderHistoryPanelLayout.createSequentialGroup()
+                .addContainerGap(50, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39))
         );
         OrderHistoryPanelLayout.setVerticalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderHistoryPanelLayout.createSequentialGroup()
+                .addContainerGap(68, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
         );
 
         ParentPanel.add(OrderHistoryPanel, "card6");
@@ -1172,24 +1230,52 @@ public class VendorPage extends javax.swing.JFrame {
 
         RevenuePanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        RevenueLbl.setText("Item Type");
+        jPanel1.setBackground(new java.awt.Color(255, 153, 0));
+
+        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        RevenueLbl.setForeground(new java.awt.Color(255, 255, 255));
+        RevenueLbl.setText("RM 0");
+
+        RevenueLbl1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        RevenueLbl1.setForeground(new java.awt.Color(255, 255, 255));
+        RevenueLbl1.setText("Revenue");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addComponent(RevenueLbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(RevenueLbl)
+                    .addComponent(RevenueLbl1))
+                .addContainerGap(35, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout RevenuePanelLayout = new javax.swing.GroupLayout(RevenuePanel);
         RevenuePanel.setLayout(RevenuePanelLayout);
         RevenuePanelLayout.setHorizontalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RevenuePanelLayout.createSequentialGroup()
-                .addGap(148, 148, 148)
-                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(322, Short.MAX_VALUE))
+                .addGap(68, 68, 68)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(168, Short.MAX_VALUE))
         );
         RevenuePanelLayout.setVerticalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RevenuePanelLayout.createSequentialGroup()
-                .addGap(124, 124, 124)
-                .addComponent(RevenueLbl)
-                .addContainerGap(382, Short.MAX_VALUE))
+                .addGap(86, 86, 86)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(345, Short.MAX_VALUE))
         );
 
         ParentPanel.add(RevenuePanel, "card8");
@@ -1206,7 +1292,7 @@ public class VendorPage extends javax.swing.JFrame {
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(SidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(ParentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1264,10 +1350,13 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(OrderHisBtn, hoverIcon4);
+        refreshOrders(OrderHistoryTable);
     }//GEN-LAST:event_OrderHisBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
-        // TODO add your handling code here:
+        LoginPage lp = new LoginPage();
+        this.dispose();
+        lp.setVisible(true);
     }//GEN-LAST:event_LogoutBtnActionPerformed
 
     private void CusReviewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CusReviewBtnActionPerformed
@@ -1312,6 +1401,11 @@ public class VendorPage extends javax.swing.JFrame {
 
     private void ItemPriceTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ItemPriceTxtFocusLost
         if ("".equals(ItemPriceTxt.getText())) {
+            
+            for (KeyListener kl : ItemPriceTxt.getKeyListeners()) {
+                ItemPriceTxt.removeKeyListener(kl);
+            }
+            
             ItemPriceTxt.setText("Item Price");
             ItemPriceTxt.setForeground(Color.gray);
             ItemPriceTxt.setFocusable(false);
@@ -1319,6 +1413,32 @@ public class VendorPage extends javax.swing.JFrame {
     }//GEN-LAST:event_ItemPriceTxtFocusLost
 
     private void ItemPriceTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ItemPriceTxtMouseClicked
+            ItemPriceTxt.addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();
+            String text = ItemPriceTxt.getText();
+
+            if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != '.') {
+                e.consume();
+            }
+
+
+            if (c == '.' && text.contains(".")) {
+                e.consume();
+            }
+
+            if (c == '.' && text.isEmpty()) {
+                e.consume();
+            }
+
+            if (text.length() >= 10) {
+                e.consume();
+            }
+        }
+    });
+
+        
         ItemPriceTxt.setFocusable(true);
         ItemPriceTxt.requestFocusInWindow();
         ItemPriceTxt.setForeground(Color.black);
@@ -1383,6 +1503,14 @@ public class VendorPage extends javax.swing.JFrame {
         updateStatus("Preparing", OrderStatusTable); 
     }//GEN-LAST:event_PreparingBtnActionPerformed
 
+    private void DrinkRBStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_DrinkRBStateChanged
+
+    }//GEN-LAST:event_DrinkRBStateChanged
+
+    private void FoodRBStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_FoodRBStateChanged
+
+    }//GEN-LAST:event_FoodRBStateChanged
+
     /**
      * @param args the command line arguments
      */
@@ -1443,6 +1571,7 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JPanel ManageMenuItemsPanel;
     private javax.swing.JButton OrderHisBtn;
     private javax.swing.JPanel OrderHistoryPanel;
+    private javax.swing.JTable OrderHistoryTable;
     private javax.swing.JButton OrderStatusBtn;
     private javax.swing.JPanel OrderStatusPanel;
     private javax.swing.JTable OrderStatusTable;
@@ -1454,6 +1583,7 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JButton PreparingBtn;
     private javax.swing.JButton RevenueBtn;
     private javax.swing.JLabel RevenueLbl;
+    private javax.swing.JLabel RevenueLbl1;
     private javax.swing.JPanel RevenuePanel;
     private javax.swing.JTable ReviewsTable;
     private javax.swing.JPanel Separator1;
@@ -1462,9 +1592,11 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JPanel SidePanel;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     // End of variables declaration//GEN-END:variables
 }

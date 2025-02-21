@@ -42,6 +42,14 @@ public class Order {
         this.Status = Status;
     }
     
+    public Order(String OrderId, String Vendor, String CustomerName, String Date, String total) {
+        this.OrderId = OrderId;
+        this.CustomerName = CustomerName;
+        this.Vendor = Vendor;
+        this.Date = Date;
+        this.total = total;
+    }
+    
      public Order() {
          
      }
@@ -116,17 +124,31 @@ public class Order {
     public void addOrder() {
  
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("Order.txt", true))) {
-            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + Date + "--" + total + "--" + 
-                    ItemName + "--" + Quantity + "--" + Status);
+            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + ItemName + "--" + Quantity + "--" + "--" + Date + "--" + total + "--" + 
+                    Status);
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Order placed successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not place order." , "Error", JOptionPane.ERROR_MESSAGE);
         }
-         
-                          
-            
-    }           
+           
+    }   
+    
+    
+    public void generateTransactionReceipt() {
+ 
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Transaction.txt", true))) {
+            writer.write(OrderId + "--" + Vendor + "--" + CustomerName + "--" + Date + "--" + total);
+            writer.newLine();
+            JOptionPane.showMessageDialog(null, "Transaction receipt generated successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Could not generate transaction receipt." , "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Could not send transaction receipt to customer." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+           
+    }   
+    
+    
      public void updateOrderStatus() {
        
           try {
@@ -185,40 +207,24 @@ public class Order {
         }
 
         return records;
-    }
-            
-    public void addRevenue(String name) {
+    }    
+    
+    
+   public List<String[]> ViewTransactions() {
         
-        double sum = Double.parseDouble(total);
+        List<String[]> records = new ArrayList<>();
         
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Revenue.txt", true))) {
-            writer.write(name + "--" + total);
-            writer.newLine();
+        try (BufferedReader reader = new BufferedReader(new FileReader("Transaction.txt"))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                records.add(data);
+            }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not add revenue." , "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
         }
-    }       
-    
-    public String displayRevenue(JLabel RevenueLbl) {
-        
-        String name = "";
-        try (BufferedReader br = new BufferedReader(new FileReader("Revenue.txt"))) {
-            String line;
-            if ((line = br.readLine()) != null) { // Read the first line only
-                String[] parts = line.split("--");
-                if (parts.length == 2) {
-                    RevenueLbl.setText(parts[1]); // Display only the revenue
-                    name = parts[1];
-                } else {
-                    RevenueLbl.setText("Invalid format!");
-                }
-            }    
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        return name;
-    }
-    
-    
+
+        return records;
+    }    
 }

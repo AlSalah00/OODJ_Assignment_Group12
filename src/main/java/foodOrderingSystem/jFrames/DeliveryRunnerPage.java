@@ -1,9 +1,11 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Notification;
 import foodOrderingSystem.Classes.Order;
 import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.Task;
+import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -62,6 +64,10 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TableHeaderStyle(TasksTable);
         TableHeaderStyle(TasksStatusTable);
         TableHeaderStyle(TasksHistoryTable);
+        TableHeaderStyle(ReviewsTable);
+        TableHeaderStyle(NotificationTable);
+        
+        
         WelcomeLbl.setText("Welcome, " + username);
         String name = WelcomeLbl.getText();
         String[] parts = name.split(", ");
@@ -216,6 +222,14 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 }
             }
         }
+        
+        User user = new User();
+        
+        String amount = user.retrieveRevenue(DeliveryRunner);
+        double doubleAmount = Double.parseDouble(amount);
+        double revenue = doubleAmount + 10;
+               
+        user.updateRevenue(DeliveryRunner, "DeliveryRunner", String.valueOf(revenue));
     }
     
     
@@ -271,6 +285,47 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void displayRevenue() {
+        
+        User user = new User();
+        
+        List<String[]> records = user.viewRevenues();
+        
+        for (String[] reviewDetails : records) {
+            if (reviewDetails.length >= 3) {
+                String name = reviewDetails[0].trim();
+                if (name.equalsIgnoreCase(DeliveryRunner)) {
+                    String revenue = reviewDetails[2];
+                    RevenueLbl.setText("RM " + revenue);
+                }
+            }
+        }
+    }
+    
+    private void refreshNotifications() {
+        
+        Notification nt = new Notification();
+        
+        DefaultTableModel model = (DefaultTableModel) NotificationTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = nt.ViewNotifications();
+        
+        for (String[] notificationDetails : records) {
+            if (notificationDetails.length >= 3) {
+                String name = notificationDetails[0].trim();
+                if (name.equalsIgnoreCase(DeliveryRunner)) {
+                    String message = notificationDetails[1];
+                    String date = notificationDetails[2];          
+            
+                    model.addRow(
+                            new Object[]{message, date
+                                });
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -308,10 +363,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         jScrollPane5 = new javax.swing.JScrollPane();
         ReviewsTable = new javax.swing.JTable();
         RevenuePanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         RevenueLbl = new javax.swing.JLabel();
+        RevenueLbl1 = new javax.swing.JLabel();
         NotificationPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        NotificationTable2 = new javax.swing.JTable();
+        NotificationTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -812,32 +869,60 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
 
         RevenuePanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        RevenueLbl.setText("0");
+        jPanel1.setBackground(new java.awt.Color(255, 153, 0));
+
+        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        RevenueLbl.setForeground(new java.awt.Color(255, 255, 255));
+        RevenueLbl.setText("RM 0");
+
+        RevenueLbl1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        RevenueLbl1.setForeground(new java.awt.Color(255, 255, 255));
+        RevenueLbl1.setText("Revenue");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addComponent(RevenueLbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(RevenueLbl)
+                    .addComponent(RevenueLbl1))
+                .addContainerGap(35, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout RevenuePanelLayout = new javax.swing.GroupLayout(RevenuePanel);
         RevenuePanel.setLayout(RevenuePanelLayout);
         RevenuePanelLayout.setHorizontalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RevenuePanelLayout.createSequentialGroup()
-                .addGap(148, 148, 148)
-                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(353, Short.MAX_VALUE))
+                .addGap(68, 68, 68)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(199, Short.MAX_VALUE))
         );
         RevenuePanelLayout.setVerticalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RevenuePanelLayout.createSequentialGroup()
-                .addGap(124, 124, 124)
-                .addComponent(RevenueLbl)
-                .addContainerGap(378, Short.MAX_VALUE))
+                .addGap(86, 86, 86)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(341, Short.MAX_VALUE))
         );
 
         ParentPanel.add(RevenuePanel, "card7");
 
         NotificationPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        NotificationTable2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        NotificationTable2.setModel(new javax.swing.table.DefaultTableModel(
+        NotificationTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        NotificationTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -845,32 +930,32 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Date", "Massage"
+                "Massage", "Date"
             }
         ));
-        NotificationTable2.setFocusable(false);
-        NotificationTable2.setGridColor(new java.awt.Color(0, 0, 0));
-        NotificationTable2.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        NotificationTable2.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        NotificationTable2.setShowGrid(true);
-        NotificationTable2.getTableHeader().setReorderingAllowed(false);
-        jScrollPane4.setViewportView(NotificationTable2);
+        NotificationTable.setFocusable(false);
+        NotificationTable.setGridColor(new java.awt.Color(0, 0, 0));
+        NotificationTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        NotificationTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        NotificationTable.setShowGrid(true);
+        NotificationTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(NotificationTable);
 
         javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
         NotificationPanel.setLayout(NotificationPanelLayout);
         NotificationPanelLayout.setHorizontalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(NotificationPanelLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addGap(58, 58, 58))
         );
         NotificationPanelLayout.setVerticalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
-                .addContainerGap(238, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(118, 118, 118))
+                .addContainerGap(57, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
         );
 
         ParentPanel.add(NotificationPanel, "card8");
@@ -949,7 +1034,9 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     }//GEN-LAST:event_CusReviewsBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
-        // TODO add your handling code here:
+        LoginPage lp = new LoginPage();
+        this.dispose();
+        lp.setVisible(true);
     }//GEN-LAST:event_LogoutBtnActionPerformed
 
     private void RevenueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RevenueBtnActionPerformed
@@ -960,6 +1047,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(RevenueBtn, hoverIcon5);
+        displayRevenue();
     }//GEN-LAST:event_RevenueBtnActionPerformed
 
     private void NotificationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NotificationBtnActionPerformed
@@ -970,6 +1058,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(NotificationBtn, hoverIcon6);
+        refreshNotifications();
     }//GEN-LAST:event_NotificationBtnActionPerformed
 
     private void AcctTaskBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AcctTaskBtnMouseClicked
@@ -1042,11 +1131,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton NotificationBtn;
     private javax.swing.JPanel NotificationPanel;
-    private javax.swing.JTable NotificationTable2;
+    private javax.swing.JTable NotificationTable;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JButton RevenueBtn;
     private javax.swing.JLabel RevenueLbl;
+    private javax.swing.JLabel RevenueLbl1;
     private javax.swing.JPanel RevenuePanel;
     private javax.swing.JTable ReviewsTable;
     private javax.swing.JPanel SeparatorPanel;
@@ -1062,6 +1152,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     private javax.swing.JTable TasksTable;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;

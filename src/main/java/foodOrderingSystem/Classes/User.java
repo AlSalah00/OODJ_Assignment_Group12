@@ -27,6 +27,7 @@ public class User {
     private String password;
     private String role;
     private String balance;
+    private String revenue;
     
     public User(String ID, String username, String email, String phoneNo, String password, String role) {
         this.ID = ID;
@@ -134,16 +135,27 @@ public class User {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not save user data." , "Error", JOptionPane.ERROR_MESSAGE);
         }
+            if ("Customer".equals(role)) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("Balance.txt", true))) {
+                writer.write(ID + "--" + username + "--" + 0);
+                writer.newLine();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Could not create user balance profile." , "Error", JOptionPane.ERROR_MESSAGE);
+            }
+           }
             
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Balance.txt", true))) {
-            writer.write(ID + "--" + username + "--" + 0);
-            writer.newLine();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not save user balance." , "Error", JOptionPane.ERROR_MESSAGE);
+            if ("Vendor".equals(role) || "Delivery Runner".equals(role)) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("Revenue.txt", true))) {
+                writer.write(username + "--" + role + "--" + 0);
+                writer.newLine();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Could not create user revenue profile." , "Error", JOptionPane.ERROR_MESSAGE);
+            }                
         }
         }      
        
     }
+    
     
     public void editUser() {
         
@@ -344,6 +356,57 @@ public class User {
             fw.close();
             
             JOptionPane.showMessageDialog(null, "Top up successful.","Info",JOptionPane.INFORMATION_MESSAGE);
+        } 
+        catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        } 
+    }
+    
+    public static String retrieveRevenue(String username) {
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader("Revenue.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("--");
+                if (parts.length == 3 && parts[0].equals(username)) {
+                    return parts[2];
+                }
+            }
+        } catch (IOException e) {
+        }
+        return "Error";
+    }
+    
+    public void updateRevenue(String username, String role, String revenue) {
+        
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("Revenue.txt"));
+            ArrayList<String> lines = new ArrayList<>();
+            String line;
+            
+            while ((line = br.readLine()) != null) {
+                lines.add(line);               
+            }
+            br.close();
+            
+            FileWriter fw = new FileWriter("Revenue.txt");
+            for (int i = 0; i < lines.size(); i++) {
+                String existingLine = lines.get(i);
+                String[] data = existingLine.split("--");
+
+                if (data[0].equals(username)) { 
+                    fw.write(
+                            username + "--"
+                            + role + "--"
+                            + revenue + "\n"
+                    );
+                } else {
+                    fw.write(existingLine + "\n");
+                }
+            }
+            fw.close();
+            
+            JOptionPane.showMessageDialog(null, "Revenue updated successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
         } 
         catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

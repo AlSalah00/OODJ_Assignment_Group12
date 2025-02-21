@@ -2,6 +2,7 @@
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.Notification;
 import foodOrderingSystem.Classes.Order;
 import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
@@ -81,6 +82,9 @@ public class CustomerPage extends javax.swing.JFrame {
         TableHeaderStyle(MenuTable);
         TableHeaderStyle(OrderStatusTable);
         TableHeaderStyle(OrderHistoryTable);
+        TableHeaderStyle(ReviewsTable);
+        TableHeaderStyle(NotificationTable);
+        TableHeaderStyle(TransactionsTable);
         
         //CustomerName = username;
         String name = WelcomeLbl.getText();
@@ -286,6 +290,15 @@ public class CustomerPage extends javax.swing.JFrame {
         Order order = new Order(orderID, CustomerName, vendor, date, 
                 String.valueOf(total), fullItems, totalQuantity, "Pending");
         order.addOrder();
+        
+        User user = new User();
+        
+        String amount = user.retrieveRevenue(vendor);
+        
+        double doubleAmount = Double.parseDouble(amount);
+        double revenue = doubleAmount + total;
+        
+        user.updateRevenue(vendor, "Vendor", String.valueOf(revenue));
     }
     
     private void addToOrder() {
@@ -340,6 +353,59 @@ public class CustomerPage extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void refreshNotifications() {
+        
+        Notification nt = new Notification();
+        
+        DefaultTableModel model = (DefaultTableModel) NotificationTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = nt.ViewNotifications();
+        
+        for (String[] notificationDetails : records) {
+            if (notificationDetails.length >= 3) {
+                String name = notificationDetails[0].trim();
+                if (name.equalsIgnoreCase(CustomerName)) {
+                    String message = notificationDetails[1];
+                    String date = notificationDetails[2];          
+            
+                    model.addRow(
+                            new Object[]{message, date
+                                });
+                }
+            }
+        }
+    }
+    
+    private void refreshTransactions() {
+        
+        Order order = new Order();
+             
+        DefaultTableModel model = (DefaultTableModel) TransactionsTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = order.ViewTransactions();
+        
+        for (String[] transactionDetails : records) {
+            if (transactionDetails.length >= 5) {
+                String name = transactionDetails[2].trim();
+                if(name.equalsIgnoreCase(CustomerName)) {
+        
+      
+                    String orderID = transactionDetails[0];
+                    String vendor = transactionDetails[1];
+                    String date= transactionDetails[3];
+                    String totalPaid = transactionDetails[4];
+                             
+                    model.addRow(
+                            new Object[]{orderID, vendor, name, date, totalPaid
+                                }); 
+                }
+            }
+        }
+        }
     
     private void submitReview() {
         
@@ -415,8 +481,8 @@ public class CustomerPage extends javax.swing.JFrame {
         jScrollPane5 = new javax.swing.JScrollPane();
         OrderHistoryTable = new javax.swing.JTable();
         TransactionHisPanel = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        TransactionTable = new javax.swing.JTable();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        TransactionsTable = new javax.swing.JTable();
         ReviewsPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         ReviewsTable = new javax.swing.JTable();
@@ -433,7 +499,7 @@ public class CustomerPage extends javax.swing.JFrame {
         Separator1 = new javax.swing.JPanel();
         NotificationPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        NotificationTable2 = new javax.swing.JTable();
+        NotificationTable = new javax.swing.JTable();
 
         VendorCommentLbl2.setBackground(new java.awt.Color(255, 255, 255));
         VendorCommentLbl2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -738,7 +804,7 @@ public class CustomerPage extends javax.swing.JFrame {
         RestaurantsLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         RestaurantsLbl.setText("Restaurants");
 
-        QuantitySpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        QuantitySpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 15, 1));
         QuantitySpinner.setFocusable(false);
 
         jScrollPane6.setViewportView(OrderList);
@@ -941,44 +1007,41 @@ public class CustomerPage extends javax.swing.JFrame {
 
         TransactionHisPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        TransactionTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        TransactionTable.setModel(new javax.swing.table.DefaultTableModel(
+        TransactionsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TransactionsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "ID", "OrderID", "Date", "Paid"
+                "OrderID", "Vendor", "Customer", "Date", "Total"
             }
         ));
-        TransactionTable.setFocusable(false);
-        TransactionTable.setGridColor(new java.awt.Color(0, 0, 0));
-        TransactionTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        TransactionTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        TransactionTable.setShowGrid(true);
-        TransactionTable.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(TransactionTable);
-        if (TransactionTable.getColumnModel().getColumnCount() > 0) {
-            TransactionTable.getColumnModel().getColumn(0).setHeaderValue("ID");
-        }
+        TransactionsTable.setFocusable(false);
+        TransactionsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TransactionsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TransactionsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TransactionsTable.setShowGrid(true);
+        TransactionsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane9.setViewportView(TransactionsTable);
 
         javax.swing.GroupLayout TransactionHisPanelLayout = new javax.swing.GroupLayout(TransactionHisPanel);
         TransactionHisPanel.setLayout(TransactionHisPanelLayout);
         TransactionHisPanelLayout.setHorizontalGroup(
             TransactionHisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TransactionHisPanelLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TransactionHisPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
         );
         TransactionHisPanelLayout.setVerticalGroup(
             TransactionHisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TransactionHisPanelLayout.createSequentialGroup()
-                .addContainerGap(242, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(114, 114, 114))
+            .addGroup(TransactionHisPanelLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         ParentPanel.add(TransactionHisPanel, "card6");
@@ -1159,8 +1222,8 @@ public class CustomerPage extends javax.swing.JFrame {
 
         NotificationPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        NotificationTable2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        NotificationTable2.setModel(new javax.swing.table.DefaultTableModel(
+        NotificationTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        NotificationTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -1168,32 +1231,32 @@ public class CustomerPage extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Date", "Massage"
+                "Massage", "Date"
             }
         ));
-        NotificationTable2.setFocusable(false);
-        NotificationTable2.setGridColor(new java.awt.Color(0, 0, 0));
-        NotificationTable2.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        NotificationTable2.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        NotificationTable2.setShowGrid(true);
-        NotificationTable2.getTableHeader().setReorderingAllowed(false);
-        jScrollPane4.setViewportView(NotificationTable2);
+        NotificationTable.setFocusable(false);
+        NotificationTable.setGridColor(new java.awt.Color(0, 0, 0));
+        NotificationTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        NotificationTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        NotificationTable.setShowGrid(true);
+        NotificationTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(NotificationTable);
 
         javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
         NotificationPanel.setLayout(NotificationPanelLayout);
         NotificationPanelLayout.setHorizontalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(NotificationPanelLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
+                .addContainerGap(65, Short.MAX_VALUE)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addGap(55, 55, 55))
         );
         NotificationPanelLayout.setVerticalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
-                .addContainerGap(238, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(118, 118, 118))
+                .addContainerGap(57, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43))
         );
 
         ParentPanel.add(NotificationPanel, "card8");
@@ -1269,10 +1332,13 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TransactionHisBtn, hoverIcon4);
+        refreshTransactions();
     }//GEN-LAST:event_TransactionHisBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
-        // TODO add your handling code here:
+        LoginPage lp = new LoginPage();
+        this.dispose();
+        lp.setVisible(true);
     }//GEN-LAST:event_LogoutBtnActionPerformed
 
     private void ReviewsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReviewsBtnActionPerformed
@@ -1294,6 +1360,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(NotificationBtn, hoverIcon6);
+        refreshNotifications();
     }//GEN-LAST:event_NotificationBtnActionPerformed
 
     private void OrderBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrderBtnMouseClicked
@@ -1387,7 +1454,7 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JTable MenuTable;
     private javax.swing.JButton NotificationBtn;
     private javax.swing.JPanel NotificationPanel;
-    private javax.swing.JTable NotificationTable2;
+    private javax.swing.JTable NotificationTable;
     private javax.swing.JButton OrderBtn;
     private javax.swing.JButton OrderHisBtn;
     private javax.swing.JPanel OrderHistoryPanel;
@@ -1413,7 +1480,7 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JLabel TotalLbl;
     private javax.swing.JButton TransactionHisBtn;
     private javax.swing.JPanel TransactionHisPanel;
-    private javax.swing.JTable TransactionTable;
+    private javax.swing.JTable TransactionsTable;
     private javax.swing.JLabel VendorCommentLbl;
     private javax.swing.JLabel VendorCommentLbl2;
     private javax.swing.JLabel VendorCommentLbl3;
@@ -1423,11 +1490,11 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane9;
     // End of variables declaration//GEN-END:variables
 }
