@@ -23,10 +23,11 @@ public class Review {
     private String massage;
     private String vendorRating;
     private String DeliveryRating;
+    private String ReviewType;
     
     
     public Review(String orderID, String customerName, String vendor, String deliveryRunner, 
-            String date, String massage, String vendorRating, String DeliveryRating) {
+            String date, String massage, String vendorRating, String DeliveryRating, String ReviewType) {
         
         this.orderID = orderID;
         this.customerName = customerName;
@@ -35,7 +36,8 @@ public class Review {
         this.date = date;
         this.massage = massage;
         this.vendorRating = vendorRating;
-        this.DeliveryRating = DeliveryRating;        
+        this.DeliveryRating = DeliveryRating;   
+        this.ReviewType = ReviewType;
     }
 
     
@@ -87,6 +89,12 @@ public class Review {
     public String getMassage() {
         return massage;
     }
+    public String getReviewType() {
+        return ReviewType;
+    }
+       public void setReviewType(String ReviewType) {
+        this.ReviewType = ReviewType;
+    }
 
     public void setMassage(String massage) {
         this.massage = massage;
@@ -107,12 +115,14 @@ public class Review {
     public void setDeliveryRating(String DeliveryRating) {
         this.DeliveryRating = DeliveryRating;
     }
+ 
+
     
     
     public void addReview() {
         
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Review.txt", true))) {
-            writer.write(orderID + "--" + customerName + "--" + vendor + "--" + deliveryRunner + "--" + date + "--" + massage + "--" + vendorRating + "--" + DeliveryRating );
+            writer.write(orderID + "--" + customerName + "--" + vendor + "--" + deliveryRunner + "--" + date + "--" + massage + "--" + vendorRating + "--" + DeliveryRating + "--" + ReviewType );
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Review added successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
@@ -136,6 +146,10 @@ public class Review {
         }
 
         return records;
+    }
+
+    public List<String[]> ViewReview() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
 

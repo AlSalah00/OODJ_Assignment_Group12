@@ -349,6 +349,15 @@ public class CustomerPage extends javax.swing.JFrame {
             return;
         }
         
+        String ReviewType;
+        
+        if(ReviewRB.isSelected()){
+        ReviewType = "Review";
+        }
+        else{
+        ReviewType ="complaint";
+        }
+        
         String comment = VendorCommentTxt.getText();
         String vendorRating = VendorSpinner.getValue().toString();
         String deliveryRating = DeliverySpinner.getValue().toString();
@@ -357,8 +366,9 @@ public class CustomerPage extends javax.swing.JFrame {
         String vendor = (String) ReviewsTable.getValueAt(selectedRow, 1);
         String deliveryRunner = (String) ReviewsTable.getValueAt(selectedRow, 2);
         String date = (String) ReviewsTable.getValueAt(selectedRow, 3);
+      
         
-        Review review = new Review(Id, CustomerName, vendor, deliveryRunner, date, comment, vendorRating, deliveryRating);
+        Review review = new Review(Id, CustomerName, vendor, deliveryRunner, date, comment, vendorRating, deliveryRating,ReviewType);
         review.addReview();
     }
 
@@ -417,6 +427,10 @@ public class CustomerPage extends javax.swing.JFrame {
         VendorCommentLbl3 = new javax.swing.JLabel();
         VendorSpinner = new javax.swing.JSpinner();
         SubmitBtn = new javax.swing.JButton();
+        ItemTypeLbl = new javax.swing.JLabel();
+        ComplaintRB = new javax.swing.JRadioButton();
+        ReviewRB = new javax.swing.JRadioButton();
+        Separator1 = new javax.swing.JPanel();
         NotificationPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         NotificationTable2 = new javax.swing.JTable();
@@ -1040,6 +1054,45 @@ public class CustomerPage extends javax.swing.JFrame {
             }
         });
 
+        ItemTypeLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        ItemTypeLbl.setText("Review Type");
+
+        ComplaintRB.setBackground(new java.awt.Color(255, 255, 255));
+        ComplaintRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        ComplaintRB.setText("Complaint");
+        ComplaintRB.setFocusable(false);
+        ComplaintRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComplaintRBActionPerformed(evt);
+            }
+        });
+
+        ReviewRB.setBackground(new java.awt.Color(255, 255, 255));
+        ReviewRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        ReviewRB.setSelected(true);
+        ReviewRB.setText("Review");
+        ReviewRB.setFocusable(false);
+        ReviewRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ReviewRBActionPerformed(evt);
+            }
+        });
+
+        Separator1.setBackground(new java.awt.Color(0, 0, 0));
+        Separator1.setMaximumSize(new java.awt.Dimension(300, 1));
+        Separator1.setMinimumSize(new java.awt.Dimension(0, 1));
+
+        javax.swing.GroupLayout Separator1Layout = new javax.swing.GroupLayout(Separator1);
+        Separator1.setLayout(Separator1Layout);
+        Separator1Layout.setHorizontalGroup(
+            Separator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        Separator1Layout.setVerticalGroup(
+            Separator1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout ReviewsPanelLayout = new javax.swing.GroupLayout(ReviewsPanel);
         ReviewsPanel.setLayout(ReviewsPanelLayout);
         ReviewsPanelLayout.setHorizontalGroup(
@@ -1048,34 +1101,53 @@ public class CustomerPage extends javax.swing.JFrame {
                 .addGap(65, 65, 65)
                 .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DeliveryRatingLbl)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(VendorCommentTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                            .addComponent(VendorCommentLbl3)
+                            .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(DeliveryRatingLbl)
+                            .addComponent(Separator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(74, 74, 74)
                         .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(VendorCommentTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(VendorCommentLbl3))
-                        .addGap(69, 69, 69)
-                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ItemTypeLbl)
+                            .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                                .addComponent(ReviewRB)
+                                .addGap(18, 18, 18)
+                                .addComponent(ComplaintRB))
                             .addComponent(VendorCommentLbl)
                             .addComponent(VendorSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
         ReviewsPanelLayout.setVerticalGroup(
             ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ReviewsPanelLayout.createSequentialGroup()
                 .addGap(39, 39, 39)
-                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(VendorCommentLbl)
-                    .addComponent(VendorCommentLbl3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(VendorCommentTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(VendorSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(43, 43, 43)
-                .addComponent(DeliveryRatingLbl)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                                .addComponent(VendorCommentLbl)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(VendorSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(91, 91, 91))
+                            .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                                .addComponent(VendorCommentLbl3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(VendorCommentTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addComponent(Separator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(DeliveryRatingLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(DeliverySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ReviewsPanelLayout.createSequentialGroup()
+                        .addComponent(ItemTypeLbl)
+                        .addGap(18, 18, 18)
+                        .addGroup(ReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ComplaintRB)
+                            .addComponent(ReviewRB))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -1254,6 +1326,14 @@ public class CustomerPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_VendorCommentTxtMouseClicked
 
+    private void ReviewRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReviewRBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ReviewRBActionPerformed
+
+    private void ComplaintRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComplaintRBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComplaintRBActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1295,9 +1375,11 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JLabel AmountLbl;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
+    private javax.swing.JRadioButton ComplaintRB;
     private javax.swing.JLabel CurrencyLbl;
     private javax.swing.JLabel DeliveryRatingLbl;
     private javax.swing.JSpinner DeliverySpinner;
+    private javax.swing.JLabel ItemTypeLbl;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton MenuBtn;
@@ -1320,9 +1402,11 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JSpinner QuantitySpinner;
     private javax.swing.JComboBox<String> RestaurantsComboBox;
     private javax.swing.JLabel RestaurantsLbl;
+    private javax.swing.JRadioButton ReviewRB;
     private javax.swing.JButton ReviewsBtn;
     private javax.swing.JPanel ReviewsPanel;
     private javax.swing.JTable ReviewsTable;
+    private javax.swing.JPanel Separator1;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JButton SubmitBtn;

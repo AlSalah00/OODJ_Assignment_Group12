@@ -238,6 +238,24 @@ public class User {
         return records;
     }
     
+    public List<String[]> viewRevenues() {
+        
+        List<String[]> records = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader("Revenue.txt"))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                records.add(data);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+
+        return records;
+    }
+    
     public void displayVendors(JComboBox ComboBox) {
         
          try (BufferedReader br = new BufferedReader(new FileReader("User.txt"))) {
