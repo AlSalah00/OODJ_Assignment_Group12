@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 
@@ -186,6 +187,37 @@ public class Order {
         return records;
     }
             
-           
+    public void addRevenue(String name) {
+        
+        double sum = Double.parseDouble(total);
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Revenue.txt", true))) {
+            writer.write(name + "--" + total);
+            writer.newLine();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Could not add revenue." , "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }       
+    
+    public String displayRevenue(JLabel RevenueLbl) {
+        
+        String name = "";
+        try (BufferedReader br = new BufferedReader(new FileReader("Revenue.txt"))) {
+            String line;
+            if ((line = br.readLine()) != null) { // Read the first line only
+                String[] parts = line.split("--");
+                if (parts.length == 2) {
+                    RevenueLbl.setText(parts[1]); // Display only the revenue
+                    name = parts[1];
+                } else {
+                    RevenueLbl.setText("Invalid format!");
+                }
+            }    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return name;
+    }
     
 }

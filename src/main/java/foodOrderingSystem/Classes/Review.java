@@ -1,8 +1,12 @@
 package foodOrderingSystem.Classes;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -31,6 +35,12 @@ public class Review {
         this.DeliveryRating = DeliveryRating;        
     }
 
+    
+    public Review(){
+        
+        
+        
+    }
     public String getOrderID() {
         return orderID;
     }
@@ -97,6 +107,24 @@ public class Review {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not add review." , "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+     public List<String[]> displayReviews() {
+        
+        List<String[]> records = new ArrayList<>();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader("Review.txt"))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                records.add(data);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+        }
+
+        return records;
     }
 }
 

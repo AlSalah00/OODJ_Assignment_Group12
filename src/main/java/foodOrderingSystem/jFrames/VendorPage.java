@@ -3,6 +3,7 @@ package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
 import foodOrderingSystem.Classes.Order;
+import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
@@ -341,7 +342,6 @@ public class VendorPage extends javax.swing.JFrame {
             
         String Id = (String) table.getValueAt(selectedRow, 0);
         String CustomerName = (String) table.getValueAt(selectedRow, 1);
-        String Vendor = (String) table.getValueAt(selectedRow, 2);
         String date = (String) table.getValueAt(selectedRow, 3);
         String total = (String) table.getValueAt(selectedRow, 4);
         String item = (String) table.getValueAt(selectedRow, 5);
@@ -352,6 +352,43 @@ public class VendorPage extends javax.swing.JFrame {
         refreshOrders(table);
     } 
 
+    
+    private void refreshReview(){
+        
+        
+        Review review = new Review();
+             
+        DefaultTableModel model = (DefaultTableModel) ReviewsTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = review.displayReviews();
+        
+        for (String[] reviewDetails : records) {
+            if (reviewDetails.length >= 7) {
+                String name = reviewDetails[2].trim();
+                if (name.equalsIgnoreCase(Vendor)) {
+                    
+                    String id = reviewDetails[0];
+                    String customer = reviewDetails[1];
+                    String comment = reviewDetails[4];
+                    String rating = reviewDetails[5];     
+                    String date = reviewDetails[3];          
+                   
+            
+                    model.addRow(
+                            new Object[]{id, customer, comment, rating, date
+                                });
+                }
+            }
+        }
+    }
+    
+    private void displayRevenue() {
+        
+        Order order = new Order();
+        order.displayRevenue(RevenueLbl);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -399,7 +436,10 @@ public class VendorPage extends javax.swing.JFrame {
         PreparingBtn = new javax.swing.JButton();
         OrderHistoryPanel = new javax.swing.JPanel();
         CusReviewPanel = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        ReviewsTable = new javax.swing.JTable();
         RevenuePanel = new javax.swing.JPanel();
+        RevenueLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -972,6 +1012,12 @@ public class VendorPage extends javax.swing.JFrame {
         OrderStatusTable.setShowGrid(true);
         OrderStatusTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(OrderStatusTable);
+        if (OrderStatusTable.getColumnModel().getColumnCount() > 0) {
+            OrderStatusTable.getColumnModel().getColumn(2).setHeaderValue("Vendor");
+            OrderStatusTable.getColumnModel().getColumn(5).setHeaderValue("Item");
+            OrderStatusTable.getColumnModel().getColumn(6).setHeaderValue("Quantity");
+            OrderStatusTable.getColumnModel().getColumn(7).setHeaderValue("Status");
+        }
 
         DoneBtn.setBackground(new java.awt.Color(255, 153, 0));
         DoneBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -1082,30 +1128,68 @@ public class VendorPage extends javax.swing.JFrame {
 
         CusReviewPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        ReviewsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ReviewsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer", "Comment", "Rating", "Date"
+            }
+        ));
+        ReviewsTable.setFocusable(false);
+        ReviewsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        ReviewsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ReviewsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ReviewsTable.setShowGrid(true);
+        ReviewsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane5.setViewportView(ReviewsTable);
+
         javax.swing.GroupLayout CusReviewPanelLayout = new javax.swing.GroupLayout(CusReviewPanel);
         CusReviewPanel.setLayout(CusReviewPanelLayout);
         CusReviewPanelLayout.setHorizontalGroup(
             CusReviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(CusReviewPanelLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         CusReviewPanelLayout.setVerticalGroup(
             CusReviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CusReviewPanelLayout.createSequentialGroup()
+                .addContainerGap(66, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(68, 68, 68))
         );
 
         ParentPanel.add(CusReviewPanel, "card7");
 
         RevenuePanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        RevenueLbl.setText("Item Type");
+
         javax.swing.GroupLayout RevenuePanelLayout = new javax.swing.GroupLayout(RevenuePanel);
         RevenuePanel.setLayout(RevenuePanelLayout);
         RevenuePanelLayout.setHorizontalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(RevenuePanelLayout.createSequentialGroup()
+                .addGap(148, 148, 148)
+                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(322, Short.MAX_VALUE))
         );
         RevenuePanelLayout.setVerticalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGroup(RevenuePanelLayout.createSequentialGroup()
+                .addGap(124, 124, 124)
+                .addComponent(RevenueLbl)
+                .addContainerGap(382, Short.MAX_VALUE))
         );
 
         ParentPanel.add(RevenuePanel, "card8");
@@ -1122,7 +1206,7 @@ public class VendorPage extends javax.swing.JFrame {
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(SidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ParentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(ParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1194,6 +1278,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(CusReviewBtn, hoverIcon5);
+        refreshReview();
     }//GEN-LAST:event_CusReviewBtnActionPerformed
 
     private void RevenueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RevenueBtnActionPerformed
@@ -1204,6 +1289,7 @@ public class VendorPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(RevenueBtn, hoverIcon6);
+        displayRevenue();
     }//GEN-LAST:event_RevenueBtnActionPerformed
 
     private void ItemNameTxtFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ItemNameTxtFocusLost
@@ -1367,7 +1453,9 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JButton PreparingBtn;
     private javax.swing.JButton RevenueBtn;
+    private javax.swing.JLabel RevenueLbl;
     private javax.swing.JPanel RevenuePanel;
+    private javax.swing.JTable ReviewsTable;
     private javax.swing.JPanel Separator1;
     private javax.swing.JPanel Separator2;
     private javax.swing.JPanel SeparatorPanel;
@@ -1377,5 +1465,6 @@ public class VendorPage extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     // End of variables declaration//GEN-END:variables
 }
