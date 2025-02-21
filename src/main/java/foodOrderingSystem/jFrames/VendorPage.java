@@ -327,8 +327,8 @@ public class VendorPage extends javax.swing.JFrame {
         }
         
         String id = (String) ItemsTable.getValueAt(selectedRow, 0);
-        User user = new User(id);
-        user.delUser();
+        Item item = new Item(id);
+        item.delItem();
         refreshItems(); 
     }
         

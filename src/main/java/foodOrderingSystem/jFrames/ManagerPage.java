@@ -1,16 +1,21 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 public class ManagerPage extends javax.swing.JFrame {
 
@@ -72,6 +77,56 @@ public class ManagerPage extends javax.swing.JFrame {
             g2d.fillRect(0, 0, width, height);
         }
     }
+    
+    private void refreshVendors() {
+        
+        User user = new User();
+        user.displayVendors(VendorsComboBox);
+        
+    }
+    private void refreshMenu() {
+        
+        Item item = new Item();
+        String vendor = VendorsComboBox.getSelectedItem().toString();
+        
+        DefaultTableModel model = (DefaultTableModel) ItemsTableM.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = item.ViewItems();
+        
+        for (String[] itemDetails : records) {
+            if (itemDetails.length >= 5) {
+                String name = itemDetails[1].trim();
+                if (name.equalsIgnoreCase(vendor)) {
+                    String id = itemDetails[0];
+                    String itemName = itemDetails[2];
+                    String itemPrice = itemDetails[3];
+                    String itemType = itemDetails[4];          
+            
+                    model.addRow(
+                            new Object[]{id, itemName, itemPrice, itemType
+                                });
+                }
+            }
+        }   
+    }
+    private void delItem() {
+        
+        int selectedRow = ItemsTableM.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for Removing!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String id = (String) ItemsTableM.getValueAt(selectedRow, 0);
+        Item item = new Item(id);
+        item.delItem();
+        refreshMenu();
+        
+    }
+    
+    
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -95,6 +150,10 @@ public class ManagerPage extends javax.swing.JFrame {
         DRPerfPanel = new javax.swing.JPanel();
         CusComplaintsPanel = new javax.swing.JPanel();
         RmvItemPanel = new javax.swing.JPanel();
+        VendorsComboBox = new javax.swing.JComboBox<>();
+        Removebtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ItemsTableM = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -348,15 +407,79 @@ public class ManagerPage extends javax.swing.JFrame {
 
         RmvItemPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        VendorsComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        VendorsComboBox.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        VendorsComboBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        VendorsComboBox.setFocusable(false);
+        VendorsComboBox.setOpaque(true);
+        VendorsComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                VendorsComboBoxItemStateChanged(evt);
+            }
+        });
+
+        Removebtn.setBackground(new java.awt.Color(255, 0, 0));
+        Removebtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Removebtn.setForeground(new java.awt.Color(255, 255, 255));
+        Removebtn.setText("Remove");
+        Removebtn.setBorder(null);
+        Removebtn.setBorderPainted(false);
+        Removebtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        Removebtn.setFocusPainted(false);
+        Removebtn.setFocusable(false);
+        Removebtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                RemovebtnMouseClicked(evt);
+            }
+        });
+        Removebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemovebtnActionPerformed(evt);
+            }
+        });
+
+        ItemsTableM.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ItemsTableM.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "ID", "Item Name", "Item Price (RM)", "Item Type"
+            }
+        ));
+        ItemsTableM.setFocusable(false);
+        ItemsTableM.setGridColor(new java.awt.Color(0, 0, 0));
+        ItemsTableM.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ItemsTableM.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ItemsTableM.setShowGrid(true);
+        ItemsTableM.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(ItemsTableM);
+
         javax.swing.GroupLayout RmvItemPanelLayout = new javax.swing.GroupLayout(RmvItemPanel);
         RmvItemPanel.setLayout(RmvItemPanelLayout);
         RmvItemPanelLayout.setHorizontalGroup(
             RmvItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(RmvItemPanelLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addGroup(RmvItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(VendorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Removebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         RmvItemPanelLayout.setVerticalGroup(
             RmvItemPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(RmvItemPanelLayout.createSequentialGroup()
+                .addGap(117, 117, 117)
+                .addComponent(VendorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                .addComponent(Removebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36))
         );
 
         ParentPanel.add(RmvItemPanel, "card6");
@@ -428,11 +551,28 @@ public class ManagerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(RmvItemBtn, hoverIcon4);
+        refreshVendors();
+        refreshMenu();
+        
     }//GEN-LAST:event_RmvItemBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_LogoutBtnActionPerformed
+
+    private void RemovebtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RemovebtnMouseClicked
+        //delItem();
+        //resetFields();
+    }//GEN-LAST:event_RemovebtnMouseClicked
+
+    private void RemovebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemovebtnActionPerformed
+        // TODO add your handling code here:
+        delItem();
+    }//GEN-LAST:event_RemovebtnActionPerformed
+
+    private void VendorsComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_VendorsComboBoxItemStateChanged
+        refreshMenu();
+    }//GEN-LAST:event_VendorsComboBoxItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -477,17 +617,21 @@ public class ManagerPage extends javax.swing.JFrame {
     private javax.swing.JPanel CusComplaintsPanel;
     private javax.swing.JButton DRPerfBtn;
     private javax.swing.JPanel DRPerfPanel;
+    private javax.swing.JTable ItemsTableM;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
+    private javax.swing.JButton Removebtn;
     private javax.swing.JButton RmvItemBtn;
     private javax.swing.JPanel RmvItemPanel;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JButton VendorPerfBtn;
     private javax.swing.JPanel VendorPerfPanel;
+    private javax.swing.JComboBox<String> VendorsComboBox;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
