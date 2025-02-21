@@ -3,6 +3,7 @@ package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
 import foodOrderingSystem.Classes.Order;
+import foodOrderingSystem.Classes.User;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -44,6 +45,7 @@ public class CustomerPage extends javax.swing.JFrame {
     
     private double total = 0.0;
     private String totalQuantity = "";
+    private String CustomerName;
     
     Icon defaultIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menu.png"));
     Icon hoverIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menuHover.png"));
@@ -76,6 +78,13 @@ public class CustomerPage extends javax.swing.JFrame {
         
         WelcomeLbl.setText("Welcome, " + username);
         TableHeaderStyle(MenuTable);
+        TableHeaderStyle(OrderStatusTable);
+        TableHeaderStyle(OrderHistoryTable);
+        
+        //CustomerName = username;
+        String name = WelcomeLbl.getText();
+        String[] parts = name.split(", ");
+        CustomerName = parts[1];
         
         OrderList.setModel(new DefaultListModel<>());
                          
@@ -135,43 +144,91 @@ public class CustomerPage extends javax.swing.JFrame {
     
     private void refreshRestaurants() {
         
-         try (BufferedReader br = new BufferedReader(new FileReader("User.txt"))) {
-             String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split("--"); 
-                if (parts.length == 6 && parts[5].trim().equalsIgnoreCase("Vendor")) { 
-                    RestaurantsComboBox.addItem(parts[1].trim());
-                }
-            }
-         } catch (FileNotFoundException ex) {
-            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        User user = new User();
+        user.displayVendors(RestaurantsComboBox);
     }
     
     private void refreshMenu() {
         
         Item item = new Item();
+        String vendor = RestaurantsComboBox.getSelectedItem().toString();
         
         DefaultTableModel model = (DefaultTableModel) MenuTable.getModel();
         model.setRowCount(0);
         
         List<String[]> records = item.ViewItems();
-        String[][] data = records.toArray(new String[0][0]);
         
-        for (String[] itemDetails : data) {
-            String id = itemDetails[0];
-            String itemName = itemDetails[2];
-            String itemPrice = itemDetails[3];
-            String itemType = itemDetails[4];          
+        for (String[] itemDetails : records) {
+            if (itemDetails.length >= 5) {
+                String name = itemDetails[1].trim();
+                if (name.equalsIgnoreCase(vendor)) {
+                    String id = itemDetails[0];
+                    String itemName = itemDetails[2];
+                    String itemPrice = itemDetails[3];
+                    String itemType = itemDetails[4];          
             
-            model.addRow(
-                    new Object[]{id, itemName, itemPrice, itemType
-                        });
+                    model.addRow(
+                            new Object[]{id, itemName, itemPrice, itemType
+                                });
+                }
+            }
         }
     }
     
+    
+    private void refreshOrderStatus() {
+        
+        Order order = new Order();
+        
+        DefaultTableModel model = (DefaultTableModel) OrderStatusTable.getModel();
+        model.setRowCount(0);
+        
+        List<String[]> records = order.ViewOrders();
+        
+        for (String[] orderDetails : records) {
+          if (orderDetails.length >= 8) {
+            String name = orderDetails[1].trim();
+            if (name.equalsIgnoreCase(CustomerName)) {         
+                model.addRow(
+                    new Object[]{
+                        orderDetails[0],
+                        orderDetails[2],
+                        orderDetails[3],
+                        orderDetails[7]
+                        });
+            }
+          }
+        }
+    }
+    
+    private void refreshOrderHistory() {
+        
+        Order order = new Order();
+        
+        DefaultTableModel model = (DefaultTableModel) OrderHistoryTable.getModel();
+        model.setRowCount(0);
+        
+        Set<String> validStatuses = Set.of("Delivered", "Cancelled");
+        List<String[]> records = order.ViewOrders();
+        
+        for (String[] orderDetails : records) {
+          if (orderDetails.length >= 8) {
+            String name = orderDetails[1].trim();
+            String status = orderDetails[7].trim();
+            if (name.equalsIgnoreCase(CustomerName) && validStatuses.contains(status)) {         
+                model.addRow(
+                    new Object[]{
+                        orderDetails[0],
+                        orderDetails[2],
+                        orderDetails[5],
+                        orderDetails[6],
+                        orderDetails[3],
+                        orderDetails[7]
+                        });
+            }
+          }
+        }
+    }
     
     private static Set<String> getExistingIDs() {
         Set<String> existingIDs = new HashSet<>();
@@ -219,10 +276,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         
         String orderID = generateID();
-        String name = WelcomeLbl.getText();
-        String[] parts = name.split(", ");
-        
-        String CustomerName = parts[1];
+
         String vendor = RestaurantsComboBox.getSelectedItem().toString();
         String items = OrderList.getModel().toString();
         String date = java.time.LocalDate.now().toString();
@@ -295,9 +349,11 @@ public class CustomerPage extends javax.swing.JFrame {
         CurrencyLbl = new javax.swing.JLabel();
         AmountLbl = new javax.swing.JLabel();
         OrderStatusPanel = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        OrderStatusTable = new javax.swing.JTable();
         OrderHistoryPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        TransactionTable1 = new javax.swing.JTable();
+        OrderHistoryTable = new javax.swing.JTable();
         TransactionHisPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         TransactionTable = new javax.swing.JTable();
@@ -573,7 +629,7 @@ public class CustomerPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "ID", "ItemName", "ItemPrice", "ItemType"
+                "ID", "Item Name", "Item Price", "Item Type"
             }
         ));
         MenuTable.setFocusable(false);
@@ -724,56 +780,87 @@ public class CustomerPage extends javax.swing.JFrame {
 
         OrderStatusPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        OrderStatusTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        OrderStatusTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "OrderID", "Restaurant", "Date", "Status"
+            }
+        ));
+        OrderStatusTable.setFocusable(false);
+        OrderStatusTable.setGridColor(new java.awt.Color(0, 0, 0));
+        OrderStatusTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        OrderStatusTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        OrderStatusTable.setShowGrid(true);
+        OrderStatusTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane7.setViewportView(OrderStatusTable);
+
         javax.swing.GroupLayout OrderStatusPanelLayout = new javax.swing.GroupLayout(OrderStatusPanel);
         OrderStatusPanel.setLayout(OrderStatusPanelLayout);
         OrderStatusPanelLayout.setHorizontalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 671, Short.MAX_VALUE)
+            .addGroup(OrderStatusPanelLayout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
         );
         OrderStatusPanelLayout.setVerticalGroup(
             OrderStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderStatusPanelLayout.createSequentialGroup()
+                .addContainerGap(50, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50))
         );
 
         ParentPanel.add(OrderStatusPanel, "card4");
 
         OrderHistoryPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        TransactionTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        TransactionTable1.setModel(new javax.swing.table.DefaultTableModel(
+        OrderHistoryTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        OrderHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "OrderID", "Restaurant", "Date", "Paid", "Status"
+                "OrderID", "Restaurant", "Item", "Quantity", "Date", "Status"
             }
         ));
-        TransactionTable1.setFocusable(false);
-        TransactionTable1.setGridColor(new java.awt.Color(0, 0, 0));
-        TransactionTable1.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        TransactionTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        TransactionTable1.setShowGrid(true);
-        TransactionTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane5.setViewportView(TransactionTable1);
+        OrderHistoryTable.setFocusable(false);
+        OrderHistoryTable.setGridColor(new java.awt.Color(0, 0, 0));
+        OrderHistoryTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        OrderHistoryTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        OrderHistoryTable.setShowGrid(true);
+        OrderHistoryTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane5.setViewportView(OrderHistoryTable);
+        if (OrderHistoryTable.getColumnModel().getColumnCount() > 0) {
+            OrderHistoryTable.getColumnModel().getColumn(2).setResizable(false);
+            OrderHistoryTable.getColumnModel().getColumn(2).setHeaderValue("Item");
+            OrderHistoryTable.getColumnModel().getColumn(3).setHeaderValue("Quantity");
+        }
 
         javax.swing.GroupLayout OrderHistoryPanelLayout = new javax.swing.GroupLayout(OrderHistoryPanel);
         OrderHistoryPanel.setLayout(OrderHistoryPanelLayout);
         OrderHistoryPanelLayout.setHorizontalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OrderHistoryPanelLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
+                .addGap(53, 53, 53)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         OrderHistoryPanelLayout.setVerticalGroup(
             OrderHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OrderHistoryPanelLayout.createSequentialGroup()
-                .addContainerGap(219, Short.MAX_VALUE)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(137, 137, 137))
+                .addContainerGap(50, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50))
         );
 
         ParentPanel.add(OrderHistoryPanel, "card5");
@@ -982,6 +1069,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(OrderStatusBtn, hoverIcon2);
+        refreshOrderStatus();
     }//GEN-LAST:event_OrderStatusBtnActionPerformed
 
     private void OrderHisBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrderHisBtnActionPerformed
@@ -992,6 +1080,7 @@ public class CustomerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(OrderHisBtn, hoverIcon3);
+        refreshOrderHistory();
     }//GEN-LAST:event_OrderHisBtnActionPerformed
 
     private void TransactionHisBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TransactionHisBtnActionPerformed
@@ -1089,9 +1178,11 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JButton OrderBtn;
     private javax.swing.JButton OrderHisBtn;
     private javax.swing.JPanel OrderHistoryPanel;
+    private javax.swing.JTable OrderHistoryTable;
     private javax.swing.JList<String> OrderList;
     private javax.swing.JButton OrderStatusBtn;
     private javax.swing.JPanel OrderStatusPanel;
+    private javax.swing.JTable OrderStatusTable;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JLabel QuantityLbl;
@@ -1108,10 +1199,8 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JButton TransactionHisBtn;
     private javax.swing.JPanel TransactionHisPanel;
     private javax.swing.JTable TransactionTable;
-    private javax.swing.JTable TransactionTable1;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -1119,5 +1208,6 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     // End of variables declaration//GEN-END:variables
 }

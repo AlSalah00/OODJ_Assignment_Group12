@@ -34,6 +34,7 @@ import javax.swing.table.JTableHeader;
 public class VendorPage extends javax.swing.JFrame {
 
     Color orange = new Color(255, 153, 0, 255);   
+    private String Vendor;
     
     Icon defaultIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menu.png"));
     Icon hoverIcon1 = new ImageIcon(ButtonStyler.class.getResource("/menuHover.png"));
@@ -66,8 +67,13 @@ public class VendorPage extends javax.swing.JFrame {
         
         
         WelcomeLbl.setText("Welcome, " + username);
+        TableHeaderStyle(ItemsTable);
         TableHeaderStyle(OrderTable);
         TableHeaderStyle(OrderStatusTable);
+        
+        String name = WelcomeLbl.getText();
+        String[] parts = name.split(", ");
+        Vendor = parts[1];
                          
         JButton[] allButtons = {ItemsBtn, OrdersBtn, OrderStatusBtn, OrderHisBtn, CusReviewBtn, RevenueBtn, LogoutBtn};      
         
@@ -154,17 +160,22 @@ public class VendorPage extends javax.swing.JFrame {
         model.setRowCount(0);
         
         List<String[]> records = item.ViewItems();
-        String[][] data = records.toArray(new String[0][0]);
         
-        for (String[] itemDetails : data) {
-            String id = itemDetails[0];
-            String itemName = itemDetails[1];
-            String itemPrice = itemDetails[2];
-            String itemType = itemDetails[3];          
+        for (String[] itemDetails : records) {
+            if (itemDetails.length >= 5) {
+                String name = itemDetails[1].trim();
+                if (name.equalsIgnoreCase(Vendor)) {
+                    
+                    String id = itemDetails[0];
+                    String itemName = itemDetails[2];
+                    String itemPrice = itemDetails[3];
+                    String itemType = itemDetails[4];          
             
-            model.addRow(
-                    new Object[]{id, itemName, itemPrice, itemType
-                        });
+                    model.addRow(
+                            new Object[]{id, itemName, itemPrice, itemType
+                                });
+                }
+            }
         }
     }
     
@@ -175,22 +186,20 @@ public class VendorPage extends javax.swing.JFrame {
         
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
-        String statusCheck;
-        
-        if (table == OrderTable) {
-            statusCheck = "Pending";
-        }
-        else {
-            statusCheck = "Accepted";
-        }
+        Set<String> validStatuses = Set.of("Accepted", "Preparing");
+
         
         List<String[]> records = order.ViewOrders();
         
         for (String[] OrderDetails : records) {
         if (OrderDetails.length >= 8) {
             String status = OrderDetails[7].trim();
-            if (status.equalsIgnoreCase(statusCheck) || status.equalsIgnoreCase("Preparing" )
-                    && table == OrderStatusTable) {
+            String name = OrderDetails[2].trim();
+            
+            if (name.equalsIgnoreCase(Vendor) && table == OrderTable && 
+                    status.equalsIgnoreCase("Pending") || 
+                    name.equalsIgnoreCase(Vendor) && table == OrderStatusTable && 
+                    validStatuses.contains(status)) {
                 model.addRow(new Object[]{
                     OrderDetails[0], // ID
                     OrderDetails[1], // Customer Name
@@ -262,7 +271,6 @@ public class VendorPage extends javax.swing.JFrame {
     private void addItem() {
     
         String itemId = generateID();
-        String vendor = WelcomeLbl.getText();
         String itemName = ItemNameTxt.getText();
         String itemPrice = ItemPriceTxt.getText();
         String FoodType;
@@ -275,7 +283,7 @@ public class VendorPage extends javax.swing.JFrame {
             FoodType = "Drink";
         }
         
-        Item item = new Item(itemId, vendor, itemName, itemPrice, FoodType);
+        Item item = new Item(itemId, Vendor, itemName, itemPrice, FoodType);
         item.addItem();
         refreshItems();
     }
@@ -284,7 +292,6 @@ public class VendorPage extends javax.swing.JFrame {
     
     private void editItem() {
         
-        String vendor = WelcomeLbl.getText();
         String itemName = ItemNameTxt.getText();
         String itemPrice = ItemPriceTxt.getText();
         String FoodType;
@@ -305,7 +312,7 @@ public class VendorPage extends javax.swing.JFrame {
             
         String Id = (String) ItemsTable.getValueAt(selectedRow, 0);
             
-        Item item = new Item(Id, vendor, itemName, itemPrice, FoodType);
+        Item item = new Item(Id, Vendor, itemName, itemPrice, FoodType);
         item.editItem();  
         refreshItems();
             
@@ -714,11 +721,15 @@ public class VendorPage extends javax.swing.JFrame {
         ItemTypeLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         ItemTypeLbl.setText("Item Type");
 
+        DrinkRB.setBackground(new java.awt.Color(255, 255, 255));
         DrinkRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         DrinkRB.setText("Drink");
+        DrinkRB.setFocusable(false);
 
+        FoodRB.setBackground(new java.awt.Color(255, 255, 255));
         FoodRB.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         FoodRB.setText("Food");
+        FoodRB.setFocusable(false);
         FoodRB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FoodRBActionPerformed(evt);
@@ -734,7 +745,7 @@ public class VendorPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "ID", "Item Name", "Item Price", "Item Type"
+                "ID", "Item Name", "Item Price (RM)", "Item Type"
             }
         ));
         ItemsTable.setFocusable(false);
@@ -744,12 +755,6 @@ public class VendorPage extends javax.swing.JFrame {
         ItemsTable.setShowGrid(true);
         ItemsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(ItemsTable);
-        if (ItemsTable.getColumnModel().getColumnCount() > 0) {
-            ItemsTable.getColumnModel().getColumn(0).setHeaderValue("ID");
-            ItemsTable.getColumnModel().getColumn(1).setHeaderValue("Item Name");
-            ItemsTable.getColumnModel().getColumn(2).setHeaderValue("Item Price");
-            ItemsTable.getColumnModel().getColumn(3).setHeaderValue("Item Type");
-        }
 
         DelItemBtn.setBackground(new java.awt.Color(255, 0, 0));
         DelItemBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

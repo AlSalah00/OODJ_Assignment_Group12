@@ -23,11 +23,11 @@ public class Item {
    
     private String itemId;
     private String vendor;
-    private String itemPrice;
     private String itemName;
+    private String itemPrice;
     private String itemType;
     
-    public Item(String itemId, String vendor, String itemPrice,String itemName,String itemType) {
+    public Item(String itemId, String vendor, String itemName, String itemPrice, String itemType) {
         this.itemId = itemId;
         this.vendor = vendor;
         this.itemPrice = itemPrice;
@@ -36,7 +36,7 @@ public class Item {
           
     }
     
-    public Item(String itemPrice, String itemName, String itemType) {
+    public Item(String itemName, String itemPrice, String itemType) {
         
         this.itemPrice = itemPrice;
         this.itemName = itemName;

@@ -1,6 +1,7 @@
 
 package foodOrderingSystem.Classes;
 
+import foodOrderingSystem.jFrames.CustomerPage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +13,9 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 public class User {
@@ -232,6 +236,23 @@ public class User {
         }
 
         return records;
+    }
+    
+    public void displayVendors(JComboBox ComboBox) {
+        
+         try (BufferedReader br = new BufferedReader(new FileReader("User.txt"))) {
+             String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("--"); 
+                if (parts.length == 6 && parts[5].trim().equalsIgnoreCase("Vendor")) { 
+                    ComboBox.addItem(parts[1].trim());
+                }
+            }
+         } catch (FileNotFoundException ex) {
+            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CustomerPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static User Login(String username, String password) {

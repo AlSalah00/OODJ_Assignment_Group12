@@ -1,3 +1,6 @@
-O0123--Ali--Simba--24/12/2024--35--Burger--1--Cancelled
-O0122--Ali--Simba--24/12/2024--35--Pizza--1--Done
-O0124--Ali--Simba--24/12/2024--35--Pasta--1--Cancelled
+O0123--Ali--Fofo--24/12/2024--35--Burger--1--Preparing
+O0122--Ali--Jumba--24/12/2024--35--Pizza--1--Accepted
+O0139--Ali--null--24/12/2024--35--Pizza--1--Pending
+O0124--null--null--24/12/2024--35--Pasta--1--Cancelled
+O0125--null--null--24/12/2024--35--Pasta--1--Accepted
+O0126--null--Simba--24/12/2024--35--Pasta--1--Delivered
