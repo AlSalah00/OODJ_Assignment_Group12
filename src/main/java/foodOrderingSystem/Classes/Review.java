@@ -18,17 +18,20 @@ public class Review {
     private String orderID;
     private String customerName;
     private String vendor;
+    private String deliveryRunner;
     private String date;
     private String massage;
     private String vendorRating;
     private String DeliveryRating;
     
     
-    public Review(String orderID, String customerName, String vendor, String date, String massage, String vendorRating, String DeliveryRating) {
+    public Review(String orderID, String customerName, String vendor, String deliveryRunner, 
+            String date, String massage, String vendorRating, String DeliveryRating) {
         
         this.orderID = orderID;
         this.customerName = customerName;
         this.vendor = vendor;
+        this.deliveryRunner = deliveryRunner;
         this.date = date;
         this.massage = massage;
         this.vendorRating = vendorRating;
@@ -63,6 +66,14 @@ public class Review {
 
     public void setVendor(String vendor) {
         this.vendor = vendor;
+    }
+    
+     public String getDeliveryRunner() {
+        return deliveryRunner;
+    }
+
+    public void setDeliveryRunner(String deliveryRunner) {
+        this.deliveryRunner = deliveryRunner;
     }
 
     public String getDate() {
@@ -101,7 +112,7 @@ public class Review {
     public void addReview() {
         
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Review.txt", true))) {
-            writer.write(orderID + "--" + customerName + "--" + vendor + "--" + date + "--" + massage + "--" + vendorRating + "--" + DeliveryRating );
+            writer.write(orderID + "--" + customerName + "--" + vendor + "--" + deliveryRunner + "--" + date + "--" + massage + "--" + vendorRating + "--" + DeliveryRating );
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Review added successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {

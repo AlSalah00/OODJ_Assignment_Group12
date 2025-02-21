@@ -355,9 +355,10 @@ public class CustomerPage extends javax.swing.JFrame {
         
         String Id = (String) ReviewsTable.getValueAt(selectedRow, 0);
         String vendor = (String) ReviewsTable.getValueAt(selectedRow, 1);
-        String date = (String) ReviewsTable.getValueAt(selectedRow, 2);
+        String deliveryRunner = (String) ReviewsTable.getValueAt(selectedRow, 2);
+        String date = (String) ReviewsTable.getValueAt(selectedRow, 3);
         
-        Review review = new Review(Id, CustomerName, vendor, date, comment, vendorRating, deliveryRating);
+        Review review = new Review(Id, CustomerName, vendor, deliveryRunner, date, comment, vendorRating, deliveryRating);
         review.addReview();
     }
 
@@ -973,13 +974,13 @@ public class CustomerPage extends javax.swing.JFrame {
         ReviewsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         ReviewsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "OrderID", "Vendor", "Date"
+                "OrderID", "Vendor", "Delivery Runner", "Date"
             }
         ));
         ReviewsTable.setFocusable(false);

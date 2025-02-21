@@ -1,50 +1,44 @@
 
 package foodOrderingSystem.Classes;
 
-import static foodOrderingSystem.Classes.User.usernameExists;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-
-public class Order {
+public class Task {
     
     
     private String OrderId;
     private String CustomerName;
     private String Vendor;
-    private String Date;
-    private String total;
+    private String DeliveryRunner;
     private String ItemName;
     private String Quantity;
+    private String Date;
     private String Status;
     
     
-    public Order(String OrderId, String CustomerName, String Vendor, 
-            String ItemName, String Quantity, String Date, String total, String Status) {
-    
+    public Task(String OrderId, String CustomerName, String Vendor, String DeliveryRunner, 
+            String ItemName, String Quantity, String Date, String Status) {
+        
         this.OrderId = OrderId;
         this.CustomerName = CustomerName;
         this.Vendor = Vendor;
-        this.Date = Date;
-        this.total = total;
+        this.DeliveryRunner = DeliveryRunner;
         this.ItemName = ItemName;
-        this.Quantity = Quantity;  
+        this.Quantity = Quantity; 
+        this.Date = Date; 
         this.Status = Status;
     }
     
-     public Order() {
-         
-     }
+    public Task() {
+        
+    }
     
     public String getOrderId() {
         return OrderId;
@@ -57,17 +51,9 @@ public class Order {
     public String getVendor() {
         return Vendor;
     }
-
-    public String getDate() {
-        return Date;
-    }
-
-    public String getTotal() {
-        return total;
-    }
-
-    public String getStatus() {
-        return Status;
+    
+    public String getDeliveryRunner() {
+        return DeliveryRunner;
     }
     
     public String getItemName() {
@@ -76,6 +62,14 @@ public class Order {
     
     public String getQuantity() {
         return Quantity;
+    }
+    
+     public String getDate() {
+        return Date;
+    }
+     
+    public String getStatus() {
+        return Status;
     }
     
     public void setOrderId(String OrderId) {
@@ -89,48 +83,44 @@ public class Order {
     public void setVendor(String Vendor) {
         this.Vendor = Vendor;
     }
-
-    public void setDate(String Date) {
-        this.Date = Date;
-    }
-
-    public void setTotal(String total) {
-        this.total = total;
-    }
-
-    public void setStatus(String Status) {
-        this.Status = Status;
+    
+    public void setDeliveryRunner(String DeliveryRunner) {
+        this.DeliveryRunner = DeliveryRunner;
     }
     
     public void setItemName(String ItemName) {
         this.ItemName = ItemName;
     }
     
-        public void setQuantity(String Quantity) {
+    public void setQuantity(String Quantity) {
         this.Quantity = Quantity;
     }
+        
+    public void setDate(String Date) {
+        this.Date = Date;
+    }
     
+    public void setStatus(String Status) {
+        this.Status = Status;
+    }
+    
+    
+    public void addTask() {
         
-       
-        
-    public void addOrder() {
- 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Order.txt", true))) {
-            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + Date + "--" + total + "--" + 
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Task.txt", true))) {
+            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + DeliveryRunner + "--" + Date + "--" + 
                     ItemName + "--" + Quantity + "--" + Status);
             writer.newLine();
-            JOptionPane.showMessageDialog(null, "Order placed successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Task added successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not place order." , "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Could not add task." , "Error", JOptionPane.ERROR_MESSAGE);
         }
-         
-                          
-            
-    }           
-     public void updateOrderStatus() {
+    }
+    
+    public void updateOrderStatus() {
        
           try {
-            BufferedReader br = new BufferedReader(new FileReader("Order.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("Task.txt"));
             ArrayList<String> lines = new ArrayList<>();
             String line;
             
@@ -139,7 +129,7 @@ public class Order {
             }
             br.close();
             
-            FileWriter fw = new FileWriter("Order.txt");
+            FileWriter fw = new FileWriter("Task.txt");
             for (int i = 0; i < lines.size(); i++) {
                 String existingLine = lines.get(i);
                 String[] data = existingLine.split("--");
@@ -149,10 +139,10 @@ public class Order {
                             OrderId + "--"
                             + CustomerName + "--"
                             + Vendor + "--"
-                            + Date + "--"
-                            + total + "--"
+                            + DeliveryRunner + "--"                                
                             + ItemName + "--"
                             + Quantity + "--"
+                            + Date + "--"  
                             + Status + "\n"
                             
                     );
@@ -169,11 +159,12 @@ public class Order {
         } 
      }
     
-    public List<String[]> ViewOrders() {
+    
+    public List<String[]> ViewTasks() {
         
         List<String[]> records = new ArrayList<>();
         
-        try (BufferedReader reader = new BufferedReader(new FileReader("Order.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("Task.txt"))) {
             String currentLine;
 
             while ((currentLine = reader.readLine()) != null) {
@@ -186,39 +177,5 @@ public class Order {
 
         return records;
     }
-            
-    public void addRevenue(String name) {
-        
-        double sum = Double.parseDouble(total);
-        
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Revenue.txt", true))) {
-            writer.write(name + "--" + total);
-            writer.newLine();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not add revenue." , "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }       
-    
-    public String displayRevenue(JLabel RevenueLbl) {
-        
-        String name = "";
-        try (BufferedReader br = new BufferedReader(new FileReader("Revenue.txt"))) {
-            String line;
-            if ((line = br.readLine()) != null) { // Read the first line only
-                String[] parts = line.split("--");
-                if (parts.length == 2) {
-                    RevenueLbl.setText(parts[1]); // Display only the revenue
-                    name = parts[1];
-                } else {
-                    RevenueLbl.setText("Invalid format!");
-                }
-            }    
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        return name;
-    }
-    
     
 }

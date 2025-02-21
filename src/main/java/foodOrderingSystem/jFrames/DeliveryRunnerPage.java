@@ -1,20 +1,34 @@
 
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
+import foodOrderingSystem.Classes.Order;
+import foodOrderingSystem.Classes.Review;
+import foodOrderingSystem.Classes.Task;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class DeliveryRunnerPage extends javax.swing.JFrame {
 
-    
+    Color orange = new Color(255, 153, 0, 255); 
+    private String DeliveryRunner;
     
     Icon defaultIcon1 = new ImageIcon(ButtonStyler.class.getResource("/task.png"));
     Icon hoverIcon1 = new ImageIcon(ButtonStyler.class.getResource("/taskHover.png"));
@@ -45,7 +59,13 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         initComponents();
         
+        TableHeaderStyle(TasksTable);
+        TableHeaderStyle(TasksStatusTable);
+        TableHeaderStyle(TasksHistoryTable);
         WelcomeLbl.setText("Welcome, " + username);
+        String name = WelcomeLbl.getText();
+        String[] parts = name.split(", ");
+        DeliveryRunner = parts[1];
                          
         JButton[] allButtons = {TasksBtn, TaskStatusBtn, TaskHisBtn, CusReviewsBtn, RevenueBtn, NotificationBtn, LogoutBtn};      
         
@@ -57,6 +77,25 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         ButtonStyler.applyMouseEffects(NotificationBtn, allButtons, defaultIcon6, hoverIcon6);
         ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon7, hoverIcon7);
     }
+    
+    
+    private void TableHeaderStyle(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setOpaque(false);
+        header.setDefaultRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+            label.setBackground(orange);
+            label.setForeground(Color.white);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            return label;
+        }
+        });
+    }   
     
     private void resetToDefault() {
         ButtonStyler.applyDefaultStyle(TasksBtn, defaultIcon1);
@@ -82,6 +121,156 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
             g2d.fillRect(0, 0, width, height);
         }
     }
+    
+    private void refreshTasks() {
+        
+        Order order = new Order();
+             
+        DefaultTableModel model = (DefaultTableModel) TasksTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = order.ViewOrders();
+        
+        for (String[] orderDetails : records) {
+            if (orderDetails.length >= 8) {
+                String status = orderDetails[7].trim();
+                if (status.equalsIgnoreCase("Done")) {
+                    
+                    String id = orderDetails[0];
+                    String vendor = orderDetails[1];
+                    String Customer = orderDetails[2];
+                    String Date = orderDetails[3];
+                    String Total = orderDetails[4];
+                    String Item = orderDetails[5];
+                    String Quantity = orderDetails[6];   
+                   
+            
+                    model.addRow(
+                            new Object[]{id, vendor, Customer, Date, Total, Item, Quantity, "Pending"
+                                });
+                }
+            }
+        }
+    }
+    
+    
+     private void refreshTasksStatus() {
+        
+        Task task = new Task();
+             
+        DefaultTableModel model = (DefaultTableModel) TasksStatusTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = task.ViewTasks();
+        
+        for (String[] taskDetails : records) {
+            if (taskDetails.length >= 8) {
+                String status = taskDetails[7].trim();
+                String name = taskDetails[3].trim();
+                if (name.equalsIgnoreCase(DeliveryRunner) && 
+                        status.equalsIgnoreCase("On the way")) {
+                    
+                    String id = taskDetails[0];
+                    String vendor = taskDetails[1];
+                    String Customer = taskDetails[2];
+                    String Date = taskDetails[4];
+                    String Item = taskDetails[5];
+                    String Quantity = taskDetails[6];   
+                   
+            
+                    model.addRow(
+                            new Object[]{id, vendor, Customer, DeliveryRunner, Item, Quantity, Date, status
+                                });
+                }
+            }
+        }
+    }
+     
+   private void refreshTasksHistory() {
+        
+        Task task = new Task();
+             
+        DefaultTableModel model = (DefaultTableModel) TasksHistoryTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = task.ViewTasks();
+        
+        for (String[] taskDetails : records) {
+            if (taskDetails.length >= 8) {
+                String status = taskDetails[7].trim();
+                String name = taskDetails[3].trim();
+                if (name.equalsIgnoreCase(DeliveryRunner) && 
+                        status.equalsIgnoreCase("Delivered")) {
+                    
+                    String id = taskDetails[0];
+                    String Customer = taskDetails[1];
+                    String Restaurant = taskDetails[2];
+                    String Date = taskDetails[4];                 
+            
+                    model.addRow(
+                            new Object[]{id, Restaurant, Customer, Date, status
+                                });
+                }
+            }
+        }
+    }
+    
+    
+    private void updateStatus(String status, JTable table) {
+     
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for updating!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+            
+        String Id = (String) table.getValueAt(selectedRow, 0);
+        String CustomerName = (String) table.getValueAt(selectedRow, 1);
+        String Vendor = (String) table.getValueAt(selectedRow, 2);
+        String item = (String) table.getValueAt(selectedRow, 3);
+        String quantity = (String) table.getValueAt(selectedRow, 4);
+        String total = (String) table.getValueAt(selectedRow, 5);
+        String date = (String) table.getValueAt(selectedRow, 6);
+        
+        Task task = new Task(Id, CustomerName, Vendor, DeliveryRunner,  item , quantity, date, status);
+        task.addTask();
+        Order order = new Order(Id, CustomerName, Vendor, item, quantity, total, date, "Delivery runner accepted");
+        order.updateOrderStatus();
+        refreshTasks();
+    } 
+    
+    private void refreshReview(){
+        
+        
+        Review review = new Review();
+             
+        DefaultTableModel model = (DefaultTableModel) ReviewsTable.getModel();
+        model.setRowCount(0);
+        
+        
+        List<String[]> records = review.displayReviews();
+        
+        for (String[] reviewDetails : records) {
+            if (reviewDetails.length >= 7) {
+                String name = reviewDetails[2].trim();
+                if (name.equalsIgnoreCase(DeliveryRunner)) {
+                    
+                    String id = reviewDetails[0];
+                    String customer = reviewDetails[1];                
+                    String rating = reviewDetails[2];     
+                    String date = reviewDetails[3];          
+                   
+            
+                    model.addRow(
+                            new Object[]{id, customer, rating, date
+                                });
+                }
+            }
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -104,11 +293,25 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         WelcomeLbl = new javax.swing.JLabel();
         PageTypeLbl = new javax.swing.JLabel();
         TasksPanel = new javax.swing.JPanel();
+        AcctTaskBtn = new javax.swing.JButton();
+        DecTaskBtn = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        TasksTable = new javax.swing.JTable();
         TaskStatusPanel = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        TasksStatusTable = new javax.swing.JTable();
+        DeliveredBtn = new javax.swing.JButton();
         TaskHistoryPanel = new javax.swing.JPanel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        TasksHistoryTable = new javax.swing.JTable();
         CusReviewsPanel = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        ReviewsTable = new javax.swing.JTable();
         RevenuePanel = new javax.swing.JPanel();
+        RevenueLbl = new javax.swing.JLabel();
         NotificationPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        NotificationTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -348,7 +551,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addComponent(PageTypeLbl))
                     .addComponent(WelcomeLbl))
-                .addContainerGap(283, Short.MAX_VALUE))
+                .addContainerGap(314, Short.MAX_VALUE))
         );
         WelcomePanelLayout.setVerticalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,90 +568,309 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
 
         TasksPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        AcctTaskBtn.setBackground(new java.awt.Color(255, 153, 0));
+        AcctTaskBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AcctTaskBtn.setForeground(new java.awt.Color(255, 255, 255));
+        AcctTaskBtn.setText("Accept");
+        AcctTaskBtn.setBorder(null);
+        AcctTaskBtn.setBorderPainted(false);
+        AcctTaskBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        AcctTaskBtn.setFocusPainted(false);
+        AcctTaskBtn.setFocusable(false);
+        AcctTaskBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AcctTaskBtnMouseClicked(evt);
+            }
+        });
+        AcctTaskBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcctTaskBtnActionPerformed(evt);
+            }
+        });
+
+        DecTaskBtn.setBackground(new java.awt.Color(255, 0, 0));
+        DecTaskBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DecTaskBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DecTaskBtn.setText("Decline");
+        DecTaskBtn.setBorder(null);
+        DecTaskBtn.setBorderPainted(false);
+        DecTaskBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DecTaskBtn.setFocusPainted(false);
+        DecTaskBtn.setFocusable(false);
+        DecTaskBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DecTaskBtnMouseClicked(evt);
+            }
+        });
+
+        TasksTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TasksTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
+            }
+        ));
+        TasksTable.setFocusable(false);
+        TasksTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TasksTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TasksTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TasksTable.setShowGrid(true);
+        TasksTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane6.setViewportView(TasksTable);
+
         javax.swing.GroupLayout TasksPanelLayout = new javax.swing.GroupLayout(TasksPanel);
         TasksPanel.setLayout(TasksPanelLayout);
         TasksPanelLayout.setHorizontalGroup(
             TasksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(TasksPanelLayout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addGroup(TasksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(TasksPanelLayout.createSequentialGroup()
+                        .addComponent(AcctTaskBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(DecTaskBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         TasksPanelLayout.setVerticalGroup(
             TasksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TasksPanelLayout.createSequentialGroup()
+                .addContainerGap(218, Short.MAX_VALUE)
+                .addGroup(TasksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AcctTaskBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DecTaskBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(68, 68, 68))
         );
 
         ParentPanel.add(TasksPanel, "card3");
 
         TaskStatusPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        TasksStatusTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TasksStatusTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
+            }
+        ));
+        TasksStatusTable.setFocusable(false);
+        TasksStatusTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TasksStatusTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TasksStatusTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TasksStatusTable.setShowGrid(true);
+        TasksStatusTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane7.setViewportView(TasksStatusTable);
+
+        DeliveredBtn.setBackground(new java.awt.Color(255, 153, 0));
+        DeliveredBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DeliveredBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DeliveredBtn.setText("Delivered");
+        DeliveredBtn.setBorder(null);
+        DeliveredBtn.setBorderPainted(false);
+        DeliveredBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DeliveredBtn.setFocusPainted(false);
+        DeliveredBtn.setFocusable(false);
+        DeliveredBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DeliveredBtnMouseClicked(evt);
+            }
+        });
+        DeliveredBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeliveredBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout TaskStatusPanelLayout = new javax.swing.GroupLayout(TaskStatusPanel);
         TaskStatusPanel.setLayout(TaskStatusPanelLayout);
         TaskStatusPanelLayout.setHorizontalGroup(
             TaskStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(TaskStatusPanelLayout.createSequentialGroup()
+                .addGroup(TaskStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(TaskStatusPanelLayout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(DeliveredBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(TaskStatusPanelLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         TaskStatusPanelLayout.setVerticalGroup(
             TaskStatusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TaskStatusPanelLayout.createSequentialGroup()
+                .addContainerGap(217, Short.MAX_VALUE)
+                .addComponent(DeliveredBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(91, 91, 91))
         );
 
         ParentPanel.add(TaskStatusPanel, "card4");
 
         TaskHistoryPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        TasksHistoryTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        TasksHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "OrderID", "Restaurant", "Customer", "Date", "Status"
+            }
+        ));
+        TasksHistoryTable.setFocusable(false);
+        TasksHistoryTable.setGridColor(new java.awt.Color(0, 0, 0));
+        TasksHistoryTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        TasksHistoryTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        TasksHistoryTable.setShowGrid(true);
+        TasksHistoryTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane9.setViewportView(TasksHistoryTable);
+
         javax.swing.GroupLayout TaskHistoryPanelLayout = new javax.swing.GroupLayout(TaskHistoryPanel);
         TaskHistoryPanel.setLayout(TaskHistoryPanelLayout);
         TaskHistoryPanelLayout.setHorizontalGroup(
             TaskHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TaskHistoryPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
         );
         TaskHistoryPanelLayout.setVerticalGroup(
             TaskHistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TaskHistoryPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(63, 63, 63))
         );
 
         ParentPanel.add(TaskHistoryPanel, "card5");
 
         CusReviewsPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        ReviewsTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        ReviewsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Order ID", "Customer", "Rating", "Date"
+            }
+        ));
+        ReviewsTable.setFocusable(false);
+        ReviewsTable.setGridColor(new java.awt.Color(0, 0, 0));
+        ReviewsTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        ReviewsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        ReviewsTable.setShowGrid(true);
+        ReviewsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane5.setViewportView(ReviewsTable);
+
         javax.swing.GroupLayout CusReviewsPanelLayout = new javax.swing.GroupLayout(CusReviewsPanel);
         CusReviewsPanel.setLayout(CusReviewsPanelLayout);
         CusReviewsPanelLayout.setHorizontalGroup(
             CusReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(CusReviewsPanelLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(81, Short.MAX_VALUE))
         );
         CusReviewsPanelLayout.setVerticalGroup(
             CusReviewsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CusReviewsPanelLayout.createSequentialGroup()
+                .addContainerGap(62, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(68, 68, 68))
         );
 
         ParentPanel.add(CusReviewsPanel, "card6");
 
         RevenuePanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        RevenueLbl.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        RevenueLbl.setText("0");
+
         javax.swing.GroupLayout RevenuePanelLayout = new javax.swing.GroupLayout(RevenuePanel);
         RevenuePanel.setLayout(RevenuePanelLayout);
         RevenuePanelLayout.setHorizontalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(RevenuePanelLayout.createSequentialGroup()
+                .addGap(148, 148, 148)
+                .addComponent(RevenueLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(353, Short.MAX_VALUE))
         );
         RevenuePanelLayout.setVerticalGroup(
             RevenuePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(RevenuePanelLayout.createSequentialGroup()
+                .addGap(124, 124, 124)
+                .addComponent(RevenueLbl)
+                .addContainerGap(378, Short.MAX_VALUE))
         );
 
         ParentPanel.add(RevenuePanel, "card7");
 
         NotificationPanel.setBackground(new java.awt.Color(255, 255, 255));
 
+        NotificationTable2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        NotificationTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Date", "Massage"
+            }
+        ));
+        NotificationTable2.setFocusable(false);
+        NotificationTable2.setGridColor(new java.awt.Color(0, 0, 0));
+        NotificationTable2.setSelectionBackground(new java.awt.Color(255, 153, 0));
+        NotificationTable2.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        NotificationTable2.setShowGrid(true);
+        NotificationTable2.getTableHeader().setReorderingAllowed(false);
+        jScrollPane4.setViewportView(NotificationTable2);
+
         javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
         NotificationPanel.setLayout(NotificationPanelLayout);
         NotificationPanelLayout.setHorizontalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 640, Short.MAX_VALUE)
+            .addGroup(NotificationPanelLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         NotificationPanelLayout.setVerticalGroup(
             NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 527, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
+                .addContainerGap(238, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(118, 118, 118))
         );
 
         ParentPanel.add(NotificationPanel, "card8");
@@ -490,6 +912,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TasksBtn, hoverIcon1);
+        refreshTasks();
     }//GEN-LAST:event_TasksBtnActionPerformed
 
     private void TaskStatusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TaskStatusBtnActionPerformed
@@ -500,6 +923,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TaskStatusBtn, hoverIcon2);
+        refreshTasksStatus();
     }//GEN-LAST:event_TaskStatusBtnActionPerformed
 
     private void TaskHisBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TaskHisBtnActionPerformed
@@ -510,6 +934,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(TaskHisBtn, hoverIcon3);
+        refreshTasksHistory();
     }//GEN-LAST:event_TaskHisBtnActionPerformed
 
     private void CusReviewsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CusReviewsBtnActionPerformed
@@ -520,6 +945,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         resetToDefault();
         ButtonStyler.applyHoverStyle(CusReviewsBtn, hoverIcon4);
+        refreshReview();
     }//GEN-LAST:event_CusReviewsBtnActionPerformed
 
     private void LogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBtnActionPerformed
@@ -545,6 +971,26 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         resetToDefault();
         ButtonStyler.applyHoverStyle(NotificationBtn, hoverIcon6);
     }//GEN-LAST:event_NotificationBtnActionPerformed
+
+    private void AcctTaskBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AcctTaskBtnMouseClicked
+        updateStatus("On the way", TasksTable);
+    }//GEN-LAST:event_AcctTaskBtnMouseClicked
+
+    private void DecTaskBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DecTaskBtnMouseClicked
+        updateStatus("Cancelled", TasksTable);
+    }//GEN-LAST:event_DecTaskBtnMouseClicked
+
+    private void AcctTaskBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcctTaskBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AcctTaskBtnActionPerformed
+
+    private void DeliveredBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeliveredBtnMouseClicked
+        updateStatus("Delivered", TasksStatusTable);
+    }//GEN-LAST:event_DeliveredBtnMouseClicked
+
+    private void DeliveredBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeliveredBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DeliveredBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -585,18 +1031,24 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AcctTaskBtn;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
     private javax.swing.JButton CusReviewsBtn;
     private javax.swing.JPanel CusReviewsPanel;
+    private javax.swing.JButton DecTaskBtn;
+    private javax.swing.JButton DeliveredBtn;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
     private javax.swing.JButton NotificationBtn;
     private javax.swing.JPanel NotificationPanel;
+    private javax.swing.JTable NotificationTable2;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JButton RevenueBtn;
+    private javax.swing.JLabel RevenueLbl;
     private javax.swing.JPanel RevenuePanel;
+    private javax.swing.JTable ReviewsTable;
     private javax.swing.JPanel SeparatorPanel;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JButton TaskHisBtn;
@@ -604,8 +1056,16 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     private javax.swing.JButton TaskStatusBtn;
     private javax.swing.JPanel TaskStatusPanel;
     private javax.swing.JButton TasksBtn;
+    private javax.swing.JTable TasksHistoryTable;
     private javax.swing.JPanel TasksPanel;
+    private javax.swing.JTable TasksStatusTable;
+    private javax.swing.JTable TasksTable;
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane9;
     // End of variables declaration//GEN-END:variables
 }
