@@ -1,3 +1,6 @@
-null--DeliveryRunner--1140.0
-null--DeliveryRunner--1140.0
-Med--Vendor--2000
+Ahmed--DeliveryRunner--1140.0
+Ali--DeliveryRunner--1140.0
+McDonalds--Vendor--2000
+Texas--Vendor--5000
+KFC--Vendor--7000
+Burger King--Vendor--9000

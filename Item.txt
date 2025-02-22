@@ -1,1 +1,8 @@
-I0817--Simba--Burger--23--Food
+I0817--McDonalds--Burger--23--Food
+I0856--McDonalds--Pepsi--5--Drink
+I0644--McDonalds--Ice Cream--23--Food
+I0188--KFC--Fried Chicken--12--Food
+I0793--KFC--Cola--3--Drink
+I0444--KFC--Chicken Sandwich--15--Food
+I0574--SubWay--Chicken Sandwich--10--Food
+I0456--SubWay--Meatballs Sandwich--10--Food
