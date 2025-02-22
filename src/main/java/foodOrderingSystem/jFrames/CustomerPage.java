@@ -495,6 +495,7 @@ public class CustomerPage extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         CurrencyLbl = new javax.swing.JLabel();
         AmountLbl = new javax.swing.JLabel();
+        ClearBtn = new javax.swing.JButton();
         OrderStatusPanel = new javax.swing.JPanel();
         jScrollPane7 = new javax.swing.JScrollPane();
         OrderStatusTable = new javax.swing.JTable();
@@ -875,6 +876,26 @@ public class CustomerPage extends javax.swing.JFrame {
         AmountLbl.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         AmountLbl.setText("0");
 
+        ClearBtn.setBackground(new java.awt.Color(255, 153, 0));
+        ClearBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        ClearBtn.setForeground(new java.awt.Color(255, 255, 255));
+        ClearBtn.setText("Clear");
+        ClearBtn.setBorder(null);
+        ClearBtn.setBorderPainted(false);
+        ClearBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ClearBtn.setFocusPainted(false);
+        ClearBtn.setFocusable(false);
+        ClearBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ClearBtnMouseClicked(evt);
+            }
+        });
+        ClearBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ClearBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
@@ -882,18 +903,6 @@ public class CustomerPage extends javax.swing.JFrame {
             .addGroup(MenuPanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(MenuPanelLayout.createSequentialGroup()
-                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(OrderBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                                .addComponent(TotalLbl)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(MenuPanelLayout.createSequentialGroup()
-                                .addComponent(CurrencyLbl)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(AmountLbl)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(MenuPanelLayout.createSequentialGroup()
                         .addComponent(RestaurantsLbl)
@@ -904,7 +913,21 @@ public class CustomerPage extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(AddItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(QuantitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(QuantitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuPanelLayout.createSequentialGroup()
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(OrderBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                                .addComponent(TotalLbl)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(MenuPanelLayout.createSequentialGroup()
+                                .addComponent(CurrencyLbl)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(AmountLbl)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ClearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(84, Short.MAX_VALUE))
         );
         MenuPanelLayout.setVerticalGroup(
@@ -924,22 +947,24 @@ public class CustomerPage extends javax.swing.JFrame {
                             .addGroup(MenuPanelLayout.createSequentialGroup()
                                 .addComponent(QuantitySpinner)
                                 .addGap(23, 23, 23)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(MenuPanelLayout.createSequentialGroup()
-                                .addComponent(TotalLbl)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(CurrencyLbl)
-                                    .addComponent(AmountLbl))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(AddItemBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(MenuPanelLayout.createSequentialGroup()
+                        .addComponent(TotalLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CurrencyLbl)
+                            .addComponent(AmountLbl))
+                        .addGap(31, 31, 31)
+                        .addComponent(OrderBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ClearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         ParentPanel.add(MenuPanel, "card3");
@@ -1431,6 +1456,16 @@ public class CustomerPage extends javax.swing.JFrame {
         refreshMenu();
     }//GEN-LAST:event_RestaurantsComboBoxItemStateChanged
 
+    private void ClearBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClearBtnMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ClearBtnMouseClicked
+
+    private void ClearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearBtnActionPerformed
+        DefaultListModel<String> listModel = (DefaultListModel<String>) OrderList.getModel();
+        listModel.clear();
+        AmountLbl.setText("0");
+    }//GEN-LAST:event_ClearBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1472,6 +1507,7 @@ public class CustomerPage extends javax.swing.JFrame {
     private javax.swing.JLabel AmountLbl;
     private javax.swing.JLabel BackgroundLbl;
     private javax.swing.JPanel BackgroundPanel;
+    private javax.swing.JButton ClearBtn;
     private javax.swing.JRadioButton ComplaintRB;
     private javax.swing.JLabel CurrencyLbl;
     private javax.swing.JLabel DeliveryRatingLbl;

@@ -1,7 +1,3 @@
 O0124--Ahmed--KFC--Ali--24/12/2024--bad--3--2--Complaint
-O0124--Hasan--McDonalds--Joe--24/12/2024--Item missing--3--2--Complaint
-O0124--Omar--Texas--Yusuf--24/12/2024--Cold food--3--2--Complaint
-O0123--Ali--sad--Hasan--24/12/2024--Good--3--2--Review
-O0124--Ali--sad--Mohamed--24/12/2024--Good--3--5--Review
-O0125--Ali--sad--John--24/12/2024--Good--3--5--Review
-O0127--Ali--sad--Joe--24/12/2024--Good--3--4--Review
+O0124--Hasan--McDonalds--Ammar--24/12/2024--Item missing--3--2--Review
+O0181--Omar--Texas--Ammar--24/12/2024--Cold food--3--2--Review

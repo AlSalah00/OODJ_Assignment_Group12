@@ -1,6 +1,6 @@
-Ahmed--DeliveryRunner--1140.0
-Ali--DeliveryRunner--1140.0
+Ammar--DeliveryRunner--510.0
+Ali--DeliveryRunner--1140
 McDonalds--Vendor--2000
 Texas--Vendor--5000
-KFC--Vendor--7000
+KFC--Vendor--7012.0
 Burger King--Vendor--9000

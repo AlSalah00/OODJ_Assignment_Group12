@@ -285,7 +285,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         
         for (String[] reviewDetails : records) {
             if (reviewDetails.length >= 7) {
-                String name = reviewDetails[2].trim();
+                String name = reviewDetails[3].trim();
                 if (name.equalsIgnoreCase(DeliveryRunner)) {
                     
                     String id = reviewDetails[0];

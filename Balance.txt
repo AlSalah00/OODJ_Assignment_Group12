@@ -1,6 +1,5 @@
-U0364--Abdullah--30
+U0364--null--130
 U0188--Ali--50
 U0764--Omar--35
 U0228--John--0
 U0524--Ammar--0
-U0383--Joe--10

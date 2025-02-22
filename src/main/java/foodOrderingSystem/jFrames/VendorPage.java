@@ -352,12 +352,12 @@ public class VendorPage extends javax.swing.JFrame {
             
         String Id = (String) table.getValueAt(selectedRow, 0);
         String CustomerName = (String) table.getValueAt(selectedRow, 1);
-        String date = (String) table.getValueAt(selectedRow, 3);
-        String total = (String) table.getValueAt(selectedRow, 4);
-        String item = (String) table.getValueAt(selectedRow, 5);
-        String quantity = (String) table.getValueAt(selectedRow, 6);
+        String item = (String) table.getValueAt(selectedRow, 3);
+        String quantity = (String) table.getValueAt(selectedRow, 4);
+        String total = (String) table.getValueAt(selectedRow, 5);
+        String date = (String) table.getValueAt(selectedRow, 6);
         
-        Order order = new Order(Id, CustomerName, Vendor, item, quantity, date , total, status);
+        Order order = new Order(Id, CustomerName, Vendor, item, quantity, total , date, status);
         order.updateOrderStatus();
         refreshOrders(table);
     } 

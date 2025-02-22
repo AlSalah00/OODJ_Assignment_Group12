@@ -2,3 +2,5 @@ null--Will be solved soon--2025-02-22
 null--Transaction Receipt: O0416| Simba| null| 2025-02-22| 46.0--2025-02-22
 null--Joe--null
 abi--Transaction Receipt: O0911 | Icebath | abi | 2025-02-22 | 46.0--2025-02-22
+null--Abdullah--null
+Ahmed--Transaction Receipt: O0717 | McDonalds | Ahmed | [Burger] | 2--2025-02-22

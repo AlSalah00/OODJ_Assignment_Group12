@@ -1,3 +1,4 @@
-O0717--Ahmed--McDonalds--[Burger]--2--2025-02-22--46.0--Pending
-O0837--Ali--McDonalds--2025-02-22--46.0--[Fries]--1--Pending
-O0911--abi--McDonalds--2025-02-22--46.0--[Ice cream]--3--Pending
+O0717--Ahmed--McDonalds--[Burger]--2--20.0--2025-02-22--Pending
+O0346--Ali--McDonalds--[Burger]--2--10.0--2025-02-22--Pending
+
+O0512--null--KFC--2025-02-22--12.0----1--[Fried Chicken]--Pending
