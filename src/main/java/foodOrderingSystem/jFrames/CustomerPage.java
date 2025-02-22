@@ -351,24 +351,25 @@ public class CustomerPage extends javax.swing.JFrame {
     
     private void refreshReviews() {
         
-        Order order = new Order();
+        Review review = new Review();
         
         DefaultTableModel model = (DefaultTableModel) ReviewsTable.getModel();
         model.setRowCount(0);
         
-        List<String[]> records = order.ViewOrders();
+        List<String[]> records = review.displayReviews();
         
         
-        for (String[] orderDetails : records) {
-            if (orderDetails.length >= 5) {
-                String name = orderDetails[1].trim();
+        for (String[] reviewDetails : records) {
+            if (reviewDetails.length >= 8) {
+                String name = reviewDetails[1].trim();
                 if (name.equalsIgnoreCase(CustomerName)) {
-                    String id = orderDetails[0];
-                    String vendor = orderDetails[1];
-                    String date = orderDetails[3];          
+                    String id = reviewDetails[0];
+                    String vendor = reviewDetails[2];
+                    String deliveryRunner = reviewDetails[3];
+                    String date = reviewDetails[4];          
             
                     model.addRow(
-                            new Object[]{id, vendor, date
+                            new Object[]{id, vendor, deliveryRunner, date
                                 });
                 }
             }
