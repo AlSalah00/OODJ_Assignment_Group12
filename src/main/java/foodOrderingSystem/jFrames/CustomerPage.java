@@ -287,18 +287,39 @@ public class CustomerPage extends javax.swing.JFrame {
         String date = java.time.LocalDate.now().toString();
         String fullItems = String.join(",", items);
         
-        Order order = new Order(orderID, CustomerName, vendor, date, 
-                String.valueOf(total), fullItems, totalQuantity, "Pending");
-        order.addOrder();
+        User u1 = new User();
+        List<String[]> records = u1.viewBalance();
         
-        User user = new User();
+        for (String[] balanceDetails : records) {
+            if (balanceDetails.length >= 3) {
+                String name = balanceDetails[1].trim();
+                int balance = Integer.parseInt(balanceDetails[2].trim());
+                if (name.equalsIgnoreCase(CustomerName)) {
+                    if (balance > total) {
+                        Order order = new Order(orderID, CustomerName, vendor, date, 
+                 String.valueOf(total), fullItems, totalQuantity, "Pending");
+                        order.addOrder();
         
-        String amount = user.retrieveRevenue(vendor);
+                        User user = new User();
         
-        double doubleAmount = Double.parseDouble(amount);
-        double revenue = doubleAmount + total;
+                        String amount = user.retrieveRevenue(vendor);
         
-        user.updateRevenue(vendor, "Vendor", String.valueOf(revenue));
+                        double doubleAmount = Double.parseDouble(amount);
+                        double revenue = doubleAmount + total;
+        
+                        user.updateRevenue(vendor, "Vendor", String.valueOf(revenue));
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: Insuffiecient balance. Please top up first! \nCurrent balance: RM " + balance,"Error",JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+            }
+            
+        }
+        
+
+        
     }
     
     private void addToOrder() {

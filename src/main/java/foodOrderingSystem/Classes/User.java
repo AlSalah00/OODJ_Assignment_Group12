@@ -106,12 +106,12 @@ public class User {
         this.balance = balance;
     }
     
-    public static boolean usernameExists(String filePath, String username) {
+    public static boolean usernameExists(String username) {
         try (Scanner scanner = new Scanner(new File("User.txt"))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                String[] userDetails = line.split(";");
-                if (userDetails.length > 0 && userDetails[0].equals(username)) {
+                String[] userDetails = line.split("--");
+                if (userDetails.length > 0 && userDetails[1].equals(username)) {
                     return true;
                 }
             }
@@ -123,7 +123,7 @@ public class User {
     
     public void addUser() {
               
-        if (usernameExists("User.txt", this.username)) {
+        if (usernameExists(this.username)) {
             JOptionPane.showMessageDialog(null, "Username already exists. Please choose a different username." , "Error", JOptionPane.ERROR_MESSAGE);          
         }
         
@@ -208,7 +208,9 @@ public class User {
 
             while ((currentLine = reader.readLine()) != null) {
                 String[] data = currentLine.split("--");
-                if (data.length > 0 && data[0].equals(ID)) {
+                role = data[5];
+                username = data[1];
+                if (data.length > 0 && data[0].equals(ID)) {                    
                     recordFound = true;
                     continue;
                 }
@@ -227,6 +229,84 @@ public class User {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile))) {
             writer.write(updatedContent.toString());
             JOptionPane.showMessageDialog(null, "Record with ID " + ID + " deleted successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while writing to the file: " + e.getMessage());
+        }       
+        
+        if ("Customer".equals(role)) {
+           delBalanceProfile();
+        }
+                
+        if ("Vendor".equals(role)) {
+           delRevenueProfile();
+        }
+    }
+    
+    public void delBalanceProfile() {
+        
+        File inputFile = new File("Balance.txt");
+        StringBuilder updatedContent = new StringBuilder();
+        boolean recordFound = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                if (data.length > 0 && data[0].equals(ID)) {                   
+                    recordFound = true;
+                    continue;
+                }
+                updatedContent.append(currentLine).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+            return;
+        }
+
+        if (!recordFound) {
+            JOptionPane.showMessageDialog(null, "Balance record with ID " + ID + " not found.","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile))) {
+            writer.write(updatedContent.toString());
+            JOptionPane.showMessageDialog(null, "Balance record with ID " + ID + " deleted successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
+    
+    public void delRevenueProfile() {
+        
+        File inputFile = new File("Revenue.txt");
+        StringBuilder updatedContent = new StringBuilder();
+        boolean recordFound = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] data = currentLine.split("--");
+                if (data.length > 0 && data[0].equals(username)) {
+                    recordFound = true;
+                    continue;
+                }
+                updatedContent.append(currentLine).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while reading the file: " + e.getMessage());
+            return;
+        }
+
+        if (!recordFound) {
+            JOptionPane.showMessageDialog(null, "Revenue record with username " + username + " not found.","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile))) {
+            writer.write(updatedContent.toString());
+            JOptionPane.showMessageDialog(null, "Revenue record with username " + username + " deleted successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while writing to the file: " + e.getMessage());
         }
@@ -406,7 +486,6 @@ public class User {
             }
             fw.close();
             
-            JOptionPane.showMessageDialog(null, "Revenue updated successfully.","Info",JOptionPane.INFORMATION_MESSAGE);
         } 
         catch (IOException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

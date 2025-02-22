@@ -30,7 +30,7 @@ public class Order {
     
     
     public Order(String OrderId, String CustomerName, String Vendor, 
-            String ItemName, String Quantity, String Date, String total, String Status) {
+            String ItemName, String Quantity, String total, String Date, String Status) {
     
         this.OrderId = OrderId;
         this.CustomerName = CustomerName;
@@ -42,7 +42,7 @@ public class Order {
         this.Status = Status;
     }
     
-    public Order(String OrderId, String Vendor, String CustomerName, String Date, String total) {
+    public Order(String OrderId, String Vendor, String CustomerName, String total, String Date) {
         this.OrderId = OrderId;
         this.CustomerName = CustomerName;
         this.Vendor = Vendor;
@@ -170,11 +170,11 @@ public class Order {
                     fw.write(
                             OrderId + "--"
                             + CustomerName + "--"
-                            + Vendor + "--"
-                            + Date + "--"
-                            + total + "--"
+                            + Vendor + "--"                                                   
                             + ItemName + "--"
                             + Quantity + "--"
+                            + total + "--"
+                            + Date + "--"         
                             + Status + "\n"
                             
                     );

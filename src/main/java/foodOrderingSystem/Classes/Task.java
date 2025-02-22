@@ -108,8 +108,8 @@ public class Task {
     public void addTask() {
         
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Task.txt", true))) {
-            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + DeliveryRunner + "--" + Date + "--" + 
-                    ItemName + "--" + Quantity + "--" + Status);
+            writer.write(OrderId + "--" + CustomerName + "--" + Vendor + "--" + DeliveryRunner + "--" + 
+                    ItemName + "--" + Quantity + "--" + Date + "--" + Status);
             writer.newLine();
             JOptionPane.showMessageDialog(null, "Task added successfully!", "Info", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
@@ -117,7 +117,7 @@ public class Task {
         }
     }
     
-    public void updateOrderStatus() {
+    public void updateTaskStatus() {
        
           try {
             BufferedReader br = new BufferedReader(new FileReader("Task.txt"));

@@ -2,6 +2,7 @@
 package foodOrderingSystem.jFrames;
 import foodOrderingSystem.Classes.ButtonStyler;
 import foodOrderingSystem.Classes.Item;
+import foodOrderingSystem.Classes.Notification;
 import foodOrderingSystem.Classes.Order;
 import foodOrderingSystem.Classes.Review;
 import foodOrderingSystem.Classes.User;
@@ -1414,29 +1415,18 @@ public class VendorPage extends javax.swing.JFrame {
 
     private void ItemPriceTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ItemPriceTxtMouseClicked
             ItemPriceTxt.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            char c = e.getKeyChar();
-            String text = ItemPriceTxt.getText();
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+                    e.consume();
+                }
 
-            if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != '.') {
-                e.consume();
+                if (ItemPriceTxt.getText().length() >= 10) {
+                    e.consume();
+                }
             }
-
-
-            if (c == '.' && text.contains(".")) {
-                e.consume();
-            }
-
-            if (c == '.' && text.isEmpty()) {
-                e.consume();
-            }
-
-            if (text.length() >= 10) {
-                e.consume();
-            }
-        }
-    });
+        });
 
         
         ItemPriceTxt.setFocusable(true);
@@ -1497,6 +1487,8 @@ public class VendorPage extends javax.swing.JFrame {
 
     private void DoneBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DoneBtnActionPerformed
         updateStatus("Done", OrderStatusTable); 
+
+        
     }//GEN-LAST:event_DoneBtnActionPerformed
 
     private void PreparingBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PreparingBtnActionPerformed

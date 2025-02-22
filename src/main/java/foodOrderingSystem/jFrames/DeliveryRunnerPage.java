@@ -14,6 +14,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.List;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,11 +48,8 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     Icon defaultIcon5 = new ImageIcon(ButtonStyler.class.getResource("/profit.png"));
     Icon hoverIcon5 = new ImageIcon(ButtonStyler.class.getResource("/profitHover.png"));
     
-    Icon defaultIcon6 = new ImageIcon(ButtonStyler.class.getResource("/bell.png"));
-    Icon hoverIcon6 = new ImageIcon(ButtonStyler.class.getResource("/bellHover.png"));
-    
-    Icon defaultIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
-    Icon hoverIcon7 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
+    Icon defaultIcon6 = new ImageIcon(ButtonStyler.class.getResource("/logout.png"));
+    Icon hoverIcon6 = new ImageIcon(ButtonStyler.class.getResource("/logoutHover.png"));
     
     public DeliveryRunnerPage(String username) {
         
@@ -65,7 +63,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TableHeaderStyle(TasksStatusTable);
         TableHeaderStyle(TasksHistoryTable);
         TableHeaderStyle(ReviewsTable);
-        TableHeaderStyle(NotificationTable);
         
         
         WelcomeLbl.setText("Welcome, " + username);
@@ -73,15 +70,14 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         String[] parts = name.split(", ");
         DeliveryRunner = parts[1];
                          
-        JButton[] allButtons = {TasksBtn, TaskStatusBtn, TaskHisBtn, CusReviewsBtn, RevenueBtn, NotificationBtn, LogoutBtn};      
+        JButton[] allButtons = {TasksBtn, TaskStatusBtn, TaskHisBtn, CusReviewsBtn, RevenueBtn, LogoutBtn};      
         
         ButtonStyler.applyMouseEffects(TasksBtn, allButtons, defaultIcon1, hoverIcon1);
         ButtonStyler.applyMouseEffects(TaskStatusBtn, allButtons, defaultIcon2, hoverIcon2);
         ButtonStyler.applyMouseEffects(TaskHisBtn, allButtons, defaultIcon3, hoverIcon3);
         ButtonStyler.applyMouseEffects(CusReviewsBtn, allButtons, defaultIcon4, hoverIcon4);
         ButtonStyler.applyMouseEffects(RevenueBtn, allButtons, defaultIcon5, hoverIcon5);
-        ButtonStyler.applyMouseEffects(NotificationBtn, allButtons, defaultIcon6, hoverIcon6);
-        ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon7, hoverIcon7);
+        ButtonStyler.applyMouseEffects(LogoutBtn, allButtons, defaultIcon6, hoverIcon6);
     }
     
     
@@ -109,8 +105,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         ButtonStyler.applyDefaultStyle(TaskHisBtn, defaultIcon3);
         ButtonStyler.applyDefaultStyle(CusReviewsBtn, defaultIcon4);
         ButtonStyler.applyDefaultStyle(RevenueBtn, defaultIcon5);
-        ButtonStyler.applyDefaultStyle(NotificationBtn, defaultIcon6);
-        ButtonStyler.applyDefaultStyle(LogoutBtn, defaultIcon7);
+        ButtonStyler.applyDefaultStyle(LogoutBtn, defaultIcon6);
     }
 
     class jPanelGradient extends JPanel {
@@ -144,16 +139,16 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 if (status.equalsIgnoreCase("Done")) {
                     
                     String id = orderDetails[0];
-                    String vendor = orderDetails[1];
-                    String Customer = orderDetails[2];
-                    String Date = orderDetails[3];
-                    String Total = orderDetails[4];
-                    String Item = orderDetails[5];
-                    String Quantity = orderDetails[6];   
+                    String customer = orderDetails[1];
+                    String vendor = orderDetails[2];
+                    String item = orderDetails[3];
+                    String quantity = orderDetails[4];
+                    String total = orderDetails[5];
+                    String date = orderDetails[6];   
                    
             
                     model.addRow(
-                            new Object[]{id, vendor, Customer, Date, Total, Item, Quantity, "Pending"
+                            new Object[]{id, customer, vendor, item, quantity, total, date, "Pending"
                                 });
                 }
             }
@@ -168,7 +163,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) TasksStatusTable.getModel();
         model.setRowCount(0);
         
-        
+       
         List<String[]> records = task.ViewTasks();
         
         for (String[] taskDetails : records) {
@@ -179,15 +174,15 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                         status.equalsIgnoreCase("On the way")) {
                     
                     String id = taskDetails[0];
-                    String vendor = taskDetails[1];
-                    String Customer = taskDetails[2];
-                    String Date = taskDetails[4];
-                    String Item = taskDetails[5];
-                    String Quantity = taskDetails[6];   
+                    String customer = taskDetails[1];
+                    String vendor = taskDetails[2];
+                    String item = taskDetails[4];
+                    String quantity = taskDetails[5];
+                    String date = taskDetails[6];    
                    
             
                     model.addRow(
-                            new Object[]{id, vendor, Customer, DeliveryRunner, Item, Quantity, Date, status
+                            new Object[]{id, customer, vendor, item, quantity, date, status
                                 });
                 }
             }
@@ -202,6 +197,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         model.setRowCount(0);
         
         
+        Set<String> validStatuses = Set.of("Delivered", "Declined");
         List<String[]> records = task.ViewTasks();
         
         for (String[] taskDetails : records) {
@@ -209,12 +205,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 String status = taskDetails[7].trim();
                 String name = taskDetails[3].trim();
                 if (name.equalsIgnoreCase(DeliveryRunner) && 
-                        status.equalsIgnoreCase("Delivered")) {
+                        validStatuses.contains(status)) {
                     
                     String id = taskDetails[0];
                     String Customer = taskDetails[1];
                     String Restaurant = taskDetails[2];
-                    String Date = taskDetails[4];                 
+                    String Date = taskDetails[6];                 
             
                     model.addRow(
                             new Object[]{id, Restaurant, Customer, Date, status
@@ -233,7 +229,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     }
     
     
-    private void updateStatus(String status, JTable table) {
+    private void addTask(String status, JTable table) {
      
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
@@ -256,6 +252,26 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         refreshTasks();
     } 
     
+    private void updateStatus(String status, JTable table) {
+        
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "No record selected for updating!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String Id = (String) table.getValueAt(selectedRow, 0);
+        String CustomerName = (String) table.getValueAt(selectedRow, 1);
+        String Vendor = (String) table.getValueAt(selectedRow, 2);
+        String item = (String) table.getValueAt(selectedRow, 3);
+        String quantity = (String) table.getValueAt(selectedRow, 4);
+        String date = (String) table.getValueAt(selectedRow, 5);
+        
+        Task task = new Task(Id, CustomerName, Vendor, DeliveryRunner, item, quantity, date, status);
+        task.updateTaskStatus();
+        refreshTasksStatus();
+    }
+    
     private void refreshReview(){
         
         
@@ -274,8 +290,8 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                     
                     String id = reviewDetails[0];
                     String customer = reviewDetails[1];                
-                    String rating = reviewDetails[2];     
-                    String date = reviewDetails[3];          
+                    String rating = reviewDetails[7];     
+                    String date = reviewDetails[4];          
                    
             
                     model.addRow(
@@ -303,29 +319,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         }
     }
     
-    private void refreshNotifications() {
-        
-        Notification nt = new Notification();
-        
-        DefaultTableModel model = (DefaultTableModel) NotificationTable.getModel();
-        model.setRowCount(0);
-        
-        List<String[]> records = nt.ViewNotifications();
-        
-        for (String[] notificationDetails : records) {
-            if (notificationDetails.length >= 3) {
-                String name = notificationDetails[0].trim();
-                if (name.equalsIgnoreCase(DeliveryRunner)) {
-                    String message = notificationDetails[1];
-                    String date = notificationDetails[2];          
-            
-                    model.addRow(
-                            new Object[]{message, date
-                                });
-                }
-            }
-        }
-    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -341,7 +334,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         LogoLbl = new javax.swing.JLabel();
         LogoutBtn = new javax.swing.JButton();
         RevenueBtn = new javax.swing.JButton();
-        NotificationBtn = new javax.swing.JButton();
         ParentPanel = new javax.swing.JPanel();
         WelcomePanel = new javax.swing.JPanel();
         BackgroundLbl = new javax.swing.JLabel();
@@ -366,9 +358,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         RevenueLbl = new javax.swing.JLabel();
         RevenueLbl1 = new javax.swing.JLabel();
-        NotificationPanel = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        NotificationTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -515,27 +504,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
             }
         });
 
-        NotificationBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        NotificationBtn.setForeground(new java.awt.Color(255, 255, 255));
-        NotificationBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/bell.png"))); // NOI18N
-        NotificationBtn.setText("Notification");
-        NotificationBtn.setToolTipText("");
-        NotificationBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 10));
-        NotificationBtn.setBorderPainted(false);
-        NotificationBtn.setContentAreaFilled(false);
-        NotificationBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        NotificationBtn.setFocusPainted(false);
-        NotificationBtn.setFocusable(false);
-        NotificationBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        NotificationBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        NotificationBtn.setIconTextGap(10);
-        NotificationBtn.setMargin(new java.awt.Insets(5, 15, 5, 10));
-        NotificationBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NotificationBtnActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout SidePanelLayout = new javax.swing.GroupLayout(SidePanel);
         SidePanel.setLayout(SidePanelLayout);
         SidePanelLayout.setHorizontalGroup(
@@ -545,7 +513,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
             .addComponent(TaskHisBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(TaskStatusBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(RevenueBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(NotificationBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(LogoutBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(SidePanelLayout.createSequentialGroup()
                 .addGroup(SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -573,8 +540,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RevenueBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(NotificationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(SeparatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(LogoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -672,7 +637,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Order ID", "Customer", "Vendor", "Date", "Total", "Item", "Quantity", "Status"
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
             }
         ));
         TasksTable.setFocusable(false);
@@ -716,16 +681,16 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         TasksStatusTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         TasksStatusTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Total", "Date", "Status"
+                "Order ID", "Customer", "Vendor", "Item", "Quantity", "Date", "Status"
             }
         ));
         TasksStatusTable.setFocusable(false);
@@ -837,7 +802,7 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Order ID", "Customer", "Rating", "Date"
+                "Order ID", "Customer", "Rating (Stars)", "Date"
             }
         ));
         ReviewsTable.setFocusable(false);
@@ -918,47 +883,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         );
 
         ParentPanel.add(RevenuePanel, "card7");
-
-        NotificationPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        NotificationTable.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        NotificationTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
-            },
-            new String [] {
-                "Massage", "Date"
-            }
-        ));
-        NotificationTable.setFocusable(false);
-        NotificationTable.setGridColor(new java.awt.Color(0, 0, 0));
-        NotificationTable.setSelectionBackground(new java.awt.Color(255, 153, 0));
-        NotificationTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        NotificationTable.setShowGrid(true);
-        NotificationTable.getTableHeader().setReorderingAllowed(false);
-        jScrollPane4.setViewportView(NotificationTable);
-
-        javax.swing.GroupLayout NotificationPanelLayout = new javax.swing.GroupLayout(NotificationPanel);
-        NotificationPanel.setLayout(NotificationPanelLayout);
-        NotificationPanelLayout.setHorizontalGroup(
-            NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
-                .addContainerGap(62, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
-        );
-        NotificationPanelLayout.setVerticalGroup(
-            NotificationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NotificationPanelLayout.createSequentialGroup()
-                .addContainerGap(57, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43))
-        );
-
-        ParentPanel.add(NotificationPanel, "card8");
 
         javax.swing.GroupLayout BackgroundPanelLayout = new javax.swing.GroupLayout(BackgroundPanel);
         BackgroundPanel.setLayout(BackgroundPanelLayout);
@@ -1050,23 +974,12 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
         displayRevenue();
     }//GEN-LAST:event_RevenueBtnActionPerformed
 
-    private void NotificationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NotificationBtnActionPerformed
-        ParentPanel.removeAll();
-        ParentPanel.add(NotificationPanel);
-        ParentPanel.repaint();
-        ParentPanel.revalidate();
-        
-        resetToDefault();
-        ButtonStyler.applyHoverStyle(NotificationBtn, hoverIcon6);
-        refreshNotifications();
-    }//GEN-LAST:event_NotificationBtnActionPerformed
-
     private void AcctTaskBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AcctTaskBtnMouseClicked
-        updateStatus("On the way", TasksTable);
+        addTask("On the way", TasksTable);
     }//GEN-LAST:event_AcctTaskBtnMouseClicked
 
     private void DecTaskBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DecTaskBtnMouseClicked
-        updateStatus("Cancelled", TasksTable);
+        addTask("Declined", TasksTable);
     }//GEN-LAST:event_DecTaskBtnMouseClicked
 
     private void AcctTaskBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcctTaskBtnActionPerformed
@@ -1129,9 +1042,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     private javax.swing.JButton DeliveredBtn;
     private javax.swing.JLabel LogoLbl;
     private javax.swing.JButton LogoutBtn;
-    private javax.swing.JButton NotificationBtn;
-    private javax.swing.JPanel NotificationPanel;
-    private javax.swing.JTable NotificationTable;
     private javax.swing.JLabel PageTypeLbl;
     private javax.swing.JPanel ParentPanel;
     private javax.swing.JButton RevenueBtn;
@@ -1153,7 +1063,6 @@ public class DeliveryRunnerPage extends javax.swing.JFrame {
     private javax.swing.JLabel WelcomeLbl;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;

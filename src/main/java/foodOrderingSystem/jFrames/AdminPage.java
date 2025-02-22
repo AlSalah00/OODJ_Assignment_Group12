@@ -376,6 +376,9 @@ public class AdminPage extends javax.swing.JFrame {
             User user = new User(Id, username, String.valueOf(newBalance));
             user.TopUp();
             refreshBalance();
+            
+            Notification nt = new Notification(username, "Top up successful! Amount: " + amount);
+            nt.sendNotification();
         }
         else {
             JOptionPane.showMessageDialog(null, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -394,16 +397,21 @@ public class AdminPage extends javax.swing.JFrame {
         List<String[]> records = order.ViewOrders();
         
         for (String[] orderDetails : records) {
+            if (orderDetails.length >= 8) {
+                String status = orderDetails[7];
+                if ("Accepted".equalsIgnoreCase(status)) {
       
                     String orderID = orderDetails[0];
                     String customer = orderDetails[1];
                     String vendor= orderDetails[2];
-                    String date = orderDetails[5];
-                    String total = orderDetails[6];
+                    String date = orderDetails[3];
+                    String total = orderDetails[4];
                              
                     model.addRow(
                             new Object[]{orderID, vendor, customer, date, total
-                                });                     
+                                });  
+                }
+            }
         }
     }
     
@@ -1438,6 +1446,20 @@ public class AdminPage extends javax.swing.JFrame {
     }//GEN-LAST:event_AmountTxtFocusLost
 
     private void AmountTxtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AmountTxtMouseClicked
+        AmountTxt.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+                    e.consume();
+                }
+
+                if (AmountTxt.getText().length() >= 10) {
+                    e.consume();
+                }
+            }
+        });
+        
         
         AmountTxt.setFocusable(true);
         AmountTxt.requestFocusInWindow();

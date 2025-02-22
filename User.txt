@@ -1,5 +1,6 @@
-U0364--Boe--boe@mail.com--0987654321--KLR567--Admin
-U0188--Simba--sim@mail.com--0123456789--RQF635--Vendor
-U0764--Dodo--do@mail.com--0975312468--EFI690--Vendor
-U0228--Susu--sus@mail.com--0192374655--OXZ212--Customer
-U0524--Falafel--faf@mail.com--0192847567--TUN680--Delivery Runner
+U0364--Abdullah--boe@mail.com--0987654321--KLR567--Admin
+U0188--Ali--sim@mail.com--0123456789--RQF635--Vendor
+U0764--Omar--do@mail.com--0975312468--EFI690--Vendor
+U0228--John--sus@mail.com--0192374655--OXZ212--Customer
+U0524--Ammar--faf@mail.com--0192847567--TUN680--Delivery Runner
+U0383--Joe--joe@mail.com--1234567890--MYX868--Customer

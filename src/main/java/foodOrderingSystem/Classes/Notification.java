@@ -15,6 +15,7 @@ public class Notification {
     private String username;
     private String message;
     private String date;
+    private String role;
 
     public Notification(String username, String message, String date) { 
         this.username = username;  
@@ -24,6 +25,12 @@ public class Notification {
     
     public Notification() {
         
+    }
+    
+    public Notification(String message, String role) {
+        
+        this.message = message;
+        this.role = role;
     }
     
     public void setUsername(String username) {
@@ -49,8 +56,10 @@ public class Notification {
     public String getDate() { 
         return date;
     }
+
     
     public void sendNotification() {
+        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("Notification.txt", true))) {
             writer.write(username + "--" + message + "--" + date);
             writer.newLine();
@@ -58,6 +67,7 @@ public class Notification {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not send notification.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        
     }
     
     public List<String[]> ViewNotifications() {
